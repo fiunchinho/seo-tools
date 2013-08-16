@@ -1,8 +1,5 @@
 #!/usr/bin/env php
 <?php
-
-error_reporting( E_ALL | E_NOTICE | E_STRICT );
-ini_set( 'display_errors', 'on' );
 require_once __DIR__.'/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
@@ -19,8 +16,9 @@ $console = new Application('SEO Tools', '1.0');
 $console
     ->register('find')
     ->setDefinition(array(
-        new InputArgument( 'domain', null, InputArgument::REQUIRED, 'Domain to find'),
-        new InputArgument( 'query', null, InputArgument::REQUIRED, 'Keywords to search'),
+        new InputArgument( 'domain', InputArgument::REQUIRED, 'Domain to find in the search results. Better without the www'),
+        new InputArgument( 'query', InputArgument::REQUIRED, 'Keywords to search in Google. If you need more than one keyword, you can use quotes like "buy kindle"'),
+        new InputArgument( 'max_page_to_look', InputArgument::OPTIONAL, 'To avoid being blocked by google, this tool will stop when reaching this page number', 10),
     ))
     ->setDescription('Find the position of your domain in google search results')
     ->setCode(function (InputInterface $input, OutputInterface $output) use ($console){
@@ -32,11 +30,10 @@ $console
 
 		$event_dispatcher 	= new \DomainFinder\Event\EventDispatcher();
 		$event_dispatcher->addSubscriber( new \DomainFinder\Event\OutputListener( $output ) );
-		$domain_finder 		= new DomainFinder( $domain, 10, $event_dispatcher );
+		$domain_finder 		= new DomainFinder( $domain, $input->getArgument('max_page_to_look'), $event_dispatcher );
 		$domain_finder->find( $input->getArgument('query') );
 
 		$counter = 0;
-		var_dump( $domain_finder->getGoogleResults()->export() );die;
 		foreach ( $domain_finder->getGoogleResults() as $result ) {
 			$table->addRow( array( ++$counter, $result->getHost(), ( $result->is($domain)?'[X]':'[]' ) ) );
 		}
@@ -45,5 +42,4 @@ $console
 		$output->writeln( "<info>Elapsed time: " . round( microtime(true) - $time, 3 ) . "</info>");
     })
 ;
-$console->setCatchExceptions(false);
 $console->run();
