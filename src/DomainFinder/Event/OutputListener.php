@@ -13,8 +13,16 @@ class OutputListener
 		return array(
 			'maxPageLimitReached',
 			'found',
-			'cantParseUrl'
+			'cantParseUrl',
+			'nextPage'
 		);
+	}
+
+	public function nextPage( $params )
+	{
+		if ( $this->output->getVerbosity() > 1 ){
+			$this->output->writeln( "<info>Going to google search results page number " . $params['current_page'] . "</info>");
+		}
 	}
 
 	public function maxPageLimitReached( $params )
@@ -29,6 +37,8 @@ class OutputListener
 
 	public function cantParseUrl( $params )
 	{
-		$this->output->writeln( "<info>Can't read URL: " . $params['url'] . "</info>");
+		if ( $this->output->getVerbosity() > 1 ){
+			$this->output->writeln( "<info>Can't read URL: " . $params['url'] . "</info>");
+		}
 	}
 }
