@@ -1,0 +1,21 @@
+{
+    "name": "fiunchinho/domainfinder",
+    "description": "Find the position of your domain in google search results",
+	"version": "0.0.1-dev",
+    "authors": [
+        {
+            "name": "Jose Manuel Armesto",
+            "email": "jose@armesto.net"
+        }
+    ],
+	"minimum-stability": "dev",
+    "autoload": {
+        "psr-0" : {
+            "DomainFinder" : "src/"
+        }
+    },
+	"require": {
+		"fabpot/goutte": "1.0.*@dev",
+		"symfony/console": "2.4.*@dev"
+	}
+}
