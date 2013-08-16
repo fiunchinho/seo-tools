@@ -71,6 +71,7 @@ class DomainFinder
 			if ( !$this->domainHasBeenFound() ){
 				$this->current_page++;
 				$this->crawler = $this->client->request( 'GET', $this->getNextPageUrl() );
+				$this->dispatcher->dispatch( 'nextPage', array( 'current_page' => $this->current_page ) );
 			}
 		}
 
@@ -79,7 +80,7 @@ class DomainFinder
 		}
 	}
 
-	public function setFound( $was_found )
+	public function setAsFound( $was_found )
 	{
 		if ( !$this->domainHasBeenFound() && $was_found ){
 			$this->found = $was_found;
@@ -104,9 +105,10 @@ class DomainFinder
 			( $that->domainHasBeenFound() )?: $that->number_of_results++;
 			try{
 				$url 			= new GoogleSearchResult( $e->filter( 'a' )->attr( 'href' ) );
-				$that->setFound( $url->is( $that->domain ) );
+				$that->setAsFound( $url->is( $that->domain ) );
 				$that->google_results->attach( $url, date('d/m/Y') );
 			}catch( \RunTimeException $exception ){
+				( $that->domainHasBeenFound() )?: $that->number_of_results--;
 				$that->dispatcher->dispatch( 'cantParseUrl', array( 'url' => $e->filter( 'a' )->attr( 'href' ) ) );
 			}
 		};
