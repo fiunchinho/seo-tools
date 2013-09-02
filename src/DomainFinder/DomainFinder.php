@@ -62,6 +62,7 @@ class DomainFinder
 
 	public function find( $query )
 	{
+		$this->query 		= $query;
 		$this->client		= new ClientCache( new Client(), new ResponseCache( new FileCache() ) );
 		$this->crawler		= $this->client->request( 'GET', 'https://www.google.es/search?q=' . urlencode( $query ) );
 
@@ -84,7 +85,7 @@ class DomainFinder
 	{
 		if ( !$this->domainHasBeenFound() && $was_found ){
 			$this->found = $was_found;
-			$this->dispatcher->dispatch( 'found', array( 'number_of_results' => $this->number_of_results, 'current_page' => $this->current_page ) );
+			$this->dispatcher->dispatch( 'found', array( 'number_of_results' => $this->number_of_results, 'current_page' => $this->current_page, 'domain' => $this->domain, 'query' => $this->query ) );
 		}
 	}
 
