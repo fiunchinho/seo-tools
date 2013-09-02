@@ -16,6 +16,10 @@
     },
 	"require": {
 		"fabpot/goutte": "1.0.*@dev",
-		"symfony/console": "2.4.*@dev"
+		"symfony/console": "2.4.*@dev",
+        "silex/silex": "1.1.*@dev",
+        "twig/twig": ">=1.8,<2.0-dev",
+        "symfony/twig-bridge": "~2.3",
+        "dflydev/doctrine-orm-service-provider": "1.0.*@dev"
 	}
 }
