@@ -1,0 +1,18 @@
+{% extends "base.twig" %}
+{% block content %}
+	{% if errors is defined %}
+		{% for error in errors %}
+			<div class="alert alert-danger">{{ error }}</div>
+		{% endfor %}
+	{% endif %}
+    <form action="{{ path('edit_query_post') }}" method="POST">
+		<div class="form-group">
+			<label for="query">Query</label>
+			<input class="form-control" type="text" id="query" name="query" required placeholder="Keywords to search" {% if query is defined %}value="{{ query.query }}"{% endif %}/>
+			<label for="domains">Domains</label>
+			<input class="form-control" type="text" id="domains" name="domains" required placeholder="Separated by empty spaces like: 'google.com yahoo.com terra.es'" {% if query is defined %}value="{{ query.domains | join(' ') }}"{% endif %}/>
+			<input type="hidden" value="{{ query.query }}" id="original_query" name="original_query" />
+		</div>
+		<button type="submit" class="btn btn-success">Edit</button>
+	</form>
+{% endblock %}

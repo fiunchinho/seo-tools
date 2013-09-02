@@ -1,0 +1,14 @@
+{% extends "base.twig" %}
+{% block content %}
+    <form action="{{ path('delete_query_post') }}" method="POST">
+			<h3>You are about to delete this query. Are you sure?</h3>
+			<div class="list-group">
+			  <span href="#" class="list-group-item">
+			    <h4 class="list-group-item-heading">{{ query.query }}</h4>
+			    <p class="list-group-item-text">{{ query.domains | join(' ') }}</p>
+			  </span>
+			</div>
+		<input type="hidden" value="{{ query.query }}" id="query" name="query" />
+		<button type="submit" class="btn btn-danger">Delete</button>
+	</form>
+{% endblock %}

@@ -1,0 +1,10 @@
+<form class="navbar-form navbar-left" action="{{ path('chart') }}" method="GET">
+	<div class="form-group">
+		<select class="form-control" id="q" name="q">
+		{% for query in saved_queries %}
+		  <option value="{{ query }}">{{ query }}</option>
+		{% endfor %}
+		</select>
+	</div>
+	<button type="submit" class="btn btn-primary">See</button>
+</form>

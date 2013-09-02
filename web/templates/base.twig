@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<meta charset="UTF-8">
+  	<title>SEO Tools</title>
+  	<!-- Bootstrap core CSS -->
+    <link href="{{ app.request.basepath }}/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{{ app.request.basepath }}/css/jumbotron-narrow.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="{{ app.request.basepath }}/assets/js/html5shiv.js"></script>
+      <script src="{{ app.request.basepath }}/assets/js/respond.min.js"></script>
+    <![endif]-->
+    {% block custom_head %}{% endblock %}
+  </head>
+  <body>
+	<div class="container">
+		<div class="header" style="min-height: 60px;">
+			<ul class="nav nav-pills pull-right">
+				<li {% if app.request.get('_route') == 'new_query' %}class="active"{% endif %}><a href="{{ path('new_query') }}">Create</a></li>
+				<li {% if app.request.get('_route') == 'queries' %}class="active"{% endif %}><a href="{{ path('queries') }}">List</a></li>
+			</ul>
+			{{ app.saved_queries | raw }}
+		</div>
+		{% block content %}{% endblock %}
+	</div>
+  </body>
+</html>

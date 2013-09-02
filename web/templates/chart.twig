@@ -1,0 +1,34 @@
+{% extends "base.twig" %}
+{% block custom_head %}
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable(
+          {{ chart | raw }}
+        );
+
+        var options = {
+          title: 'Keyword Analysis: "{{ query }}',
+          legend: {
+          	position: 'bottom'
+          },
+          chartArea: {
+            'width': 600
+          },
+          pointSize: 5,
+          vAxis: {
+          	direction: -1,
+          	minValue: 1
+          }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="chart_div" style="margin: auto; width: 650px; height: 450px;"></div>
+{% endblock %}

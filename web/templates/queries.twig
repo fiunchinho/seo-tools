@@ -1,0 +1,31 @@
+{% extends "base.twig" %}
+{% block content %}
+	<table class="table table-hover">
+        <thead>
+          <tr>
+            <th style="width: 5%">#</th>
+            <th style="width: 25%">Query</th>
+            <th style="width: 30%">Domains</th>
+            <th style="width: 30%">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for keywords, query in queries %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ keywords }}</td>
+            <td>
+            	{% for domain in query %}
+					<p class="list-group-item-text"><a href="http://{{ domain }}" target="_blank">{{ domain }}</a></p>
+				{% endfor %}
+            </td>
+            <td>
+            	<a class="btn btn-primary" href="{{ path('chart') ~ '?q=' ~ keywords }}">Chart</a>
+				<a class="btn btn-warning" href="{{ path('edit_query', {query: keywords}) }}">Edit</a>
+				<a class="btn btn-danger" href="{{ path('delete_query', {query: keywords}) }}">Delete</a>
+			</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+{% endblock %}
