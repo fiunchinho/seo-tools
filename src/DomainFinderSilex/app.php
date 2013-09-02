@@ -11,28 +11,6 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array(
     'debug' 	=> true,
 ));
 
-$app->register(new \Silex\Provider\DoctrineServiceProvider, array(
-    "db.options" => array(
-        "driver" => "pdo_sqlite",
-        "path" => "/var/www/google/log.db",
-    ),
-));
-
-$app->register(new \Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider, array(
-    "orm.proxies_dir" => "/var/www/google/Proxy",
-    "orm.em.options" => array(
-        "mappings" => array(
-            array(
-                "type" 		=> "annotation",
-                "namespace" => "DomainFinder\Entity",
-                "path" 		=> __DIR__."/src/DomainFinder/Entity",
-            )
-        )
-    )
-));
-
-var_dump( $app['orm.em'] );die;
-
 $app['pdo'] = $app->share( function() use ($app){
 	return new \PDO('sqlite:/var/www/google/log.db');
 });
