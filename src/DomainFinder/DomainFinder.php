@@ -2,6 +2,7 @@
 namespace DomainFinder;
 
 use Goutte\Client;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class DomainFinder
 {
@@ -10,12 +11,6 @@ class DomainFinder
 	 * @var string
 	 */
 	public $domain;
-
-	/**
-	 * Maximum number of google results pages we want to check.
-	 * @var integer
-	 */
-	public $max_google_page;
 
 	/**
 	 * Whether we have already found our domain our not.
@@ -47,10 +42,8 @@ class DomainFinder
 	 */
 	public $google_results;
 
-	public function __construct( $domain, $max_google_page = 10, \DomainFinder\Event\EventDispatcher $event_dispatcher )
+	public function __construct( \Symfony\Component\EventDispatcher\EventDispatcher $event_dispatcher )
 	{
-		$this->domain 			= $domain;
-		$this->max_google_page 	= $max_google_page;
 		$this->dispatcher 		= $event_dispatcher;
 		$this->google_results 	= new GoogleSearchResultCollection();
 	}
@@ -60,23 +53,24 @@ class DomainFinder
 		return $this->found;
 	}
 
-	public function find( $query )
+	public function find( $domain, $query, $max_google_page = 10 )
 	{
+		$this->domain 		= $domain;
 		$this->query 		= $query;
 		$this->client		= new ClientCache( new Client(), new ResponseCache( new FileCache() ) );
 		$this->crawler		= $this->client->request( 'GET', 'https://www.google.es/search?q=' . urlencode( $query ) );
 
-		while( !$this->domainHasBeenFound() && ( $this->current_page < $this->max_google_page ) )
+		while( !$this->domainHasBeenFound() && ( $this->current_page < $max_google_page ) )
 		{
 			$this->findDomainInSearchResultsForCurrentPage();
 			if ( !$this->domainHasBeenFound() ){
 				$this->current_page++;
 				$this->crawler = $this->client->request( 'GET', $this->getNextPageUrl() );
-				$this->dispatcher->dispatch( 'nextPage', array( 'current_page' => $this->current_page ) );
+				 $this->dispatcher->dispatch( 'nextPage', new GenericEvent( $this, array( 'current_page' => $this->current_page ) ) );
 			}
 		}
 
-		if ( $this->current_page >= $this->max_google_page ){
+		if ( $this->current_page >= $max_google_page ){
 			$this->dispatcher->dispatch( 'maxPageLimitReached' );
 		}
 	}
@@ -85,7 +79,7 @@ class DomainFinder
 	{
 		if ( !$this->domainHasBeenFound() && $was_found ){
 			$this->found = $was_found;
-			$this->dispatcher->dispatch( 'found', array( 'number_of_results' => $this->number_of_results, 'current_page' => $this->current_page, 'domain' => $this->domain, 'query' => $this->query ) );
+			$this->dispatcher->dispatch( 'found', new GenericEvent( $this, array( 'number_of_results' => $this->number_of_results, 'current_page' => $this->current_page, 'domain' => $this->domain, 'query' => $this->query ) ) );
 		}
 	}
 
@@ -110,7 +104,7 @@ class DomainFinder
 				$that->google_results->attach( $url, date('d/m/Y') );
 			}catch( \RunTimeException $exception ){
 				( $that->domainHasBeenFound() )?: $that->number_of_results--;
-				$that->dispatcher->dispatch( 'cantParseUrl', array( 'url' => $e->filter( 'a' )->attr( 'href' ) ) );
+				$that->dispatcher->dispatch( 'cantParseUrl', new GenericEvent( $that, array( 'url' => $e->filter( 'a' )->attr( 'href' ) ) ) );
 			}
 		};
 	}

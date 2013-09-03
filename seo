@@ -27,18 +27,21 @@ $console
         $pdo        = new \PDO('sqlite:/var/www/google/log.db');
     	$domains 	= $input->getArgument('domains');
 
-    	$event_dispatcher 	= new \DomainFinder\Event\EventDispatcher();
-		$event_dispatcher->addSubscriber( new \DomainFinder\Event\OutputListener( $output ) );
+    	//$event_dispatcher 	= new \DomainFinder\Event\EventDispatcher();
+        $event_dispatcher   = \Symfony\Component\EventDispatcher\EventDispatcher();
+		//$event_dispatcher->addSubscriber( new \DomainFinder\Event\OutputListener( $output ) );
 		if ( $input->getOption('log') ){
-			$event_dispatcher->addSubscriber( new \DomainFinder\Event\LoggerListener( $pdo ) );
+			$event_dispatcher->addSubscriber( new \DomainFinder\Event\DatabaseListener() );
 		}
+
+        $domain_finder = new DomainFinder( $event_dispatcher );
 
     	foreach ( $domains as $domain ){
     		$table 	= new \Symfony\Component\Console\Helper\TableHelper();
 			$table->setHeaders( array( '#', 'Url', 'Is Yours?' ) );
 
-			$domain_finder = new DomainFinder( $domain, $input->getOption('max_page_to_look'), $event_dispatcher );
-			$domain_finder->find( $input->getArgument('query') );
+			
+			$domain_finder->find( $domain, $input->getArgument('query'), $input->getOption('max_page_to_look') );
 
 			$counter = 0;
 			foreach ( $domain_finder->getGoogleResults() as $result ) {
@@ -71,15 +74,16 @@ QUERY;
         $statement->execute();
         $queries    = $statement->fetchAll( \PDO::FETCH_ASSOC );
 
-        $event_dispatcher   = new \DomainFinder\Event\EventDispatcher();
-        $event_dispatcher->addSubscriber( new \DomainFinder\Event\OutputListener( $output ) );
-        $event_dispatcher->addSubscriber( new \DomainFinder\Event\LoggerListener( $pdo ) );
+        $event_dispatcher   = new \Symfony\Component\EventDispatcher\EventDispatcher();
+        $event_dispatcher->addSubscriber( new \DomainFinder\Event\DatabaseListener( $pdo ) );
+        //$event_dispatcher->addSubscriber( new \DomainFinder\Event\OutputListener( $output ) );
+        //$event_dispatcher->addSubscriber( new \DomainFinder\Event\LoggerListener( $pdo ) );
 
         foreach ( $queries as $query ){
             $domains = explode( ' ', $query['domain'] );
             foreach ( $domains as $domain ){
-                $domain_finder = new DomainFinder( $domain, $input->getOption('max_page_to_look'), $event_dispatcher );
-                $domain_finder->find( $query['query'] );
+                $domain_finder = new DomainFinder( $event_dispatcher );
+                $domain_finder->find( $domain, $query['query'], $input->getOption('max_page_to_look') );
             }
         }
         
