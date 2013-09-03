@@ -1,44 +1,47 @@
 <?php
 namespace DomainFinder\Event;
 
-class OutputListener
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\Event;
+
+class OutputListener implements EventSubscriberInterface
 {
 	public function __construct( \Symfony\Component\Console\Output\OutputInterface $output )
 	{
 		$this->output = $output;
 	}
 
-	public function getSubscribedEvents()
+	public static function getSubscribedEvents()
 	{
 		return array(
-			'maxPageLimitReached',
-			'found',
-			'cantParseUrl',
-			'nextPage'
+			'maxPageLimitReached' 	=> 'onMaxPageLimitReached',
+			'found' 				=> 'onFound',
+			'cantParseUrl' 			=> 'onCantParseUrl',
+			'nextPage' 				=> 'onNextPage'
 		);
 	}
 
-	public function nextPage( $params )
+	public function onNextPage( Event $event )
 	{
 		if ( $this->output->getVerbosity() > 1 ){
-			$this->output->writeln( "<info>Going to google search results page number " . $params['current_page'] . "</info>");
+			$this->output->writeln( "<info>Going to google search results page number " . $event->getArgument('current_page') . "</info>");
 		}
 	}
 
-	public function maxPageLimitReached( $params )
+	public function onMaxPageLimitReached( Event $event )
 	{
 		$this->output->writeln( "<error>Domain was not found: maximum google search page reached.</error>");
 	}
 
-	public function found( $params )
+	public function onFound( Event $event )
 	{
-		$this->output->writeln( "<question>Domain found in the position " . $params['number_of_results'] . ", in the page number " . $params['current_page'] . ".</question>");
+		$this->output->writeln( "<question>Domain found in the position " . $event->getArgument('number_of_results') . ", in the page number " . $event->getArgument('current_page') . ".</question>");
 	}
 
-	public function cantParseUrl( $params )
+	public function onCantParseUrl( Event $event )
 	{
 		if ( $this->output->getVerbosity() > 1 ){
-			$this->output->writeln( "<info>Can't read URL: " . $params['url'] . "</info>");
+			$this->output->writeln( "<info>Can't read URL: " . $event->getArgument('url') . "</info>");
 		}
 	}
 }

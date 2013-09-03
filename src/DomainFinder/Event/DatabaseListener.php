@@ -10,6 +10,7 @@ class DatabaseListener implements EventSubscriberInterface
 	{
 		$this->pdo = $pdo;
 	}
+
 	public static function getSubscribedEvents()
     {
         return array(

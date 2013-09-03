@@ -27,9 +27,8 @@ $console
         $pdo        = new \PDO('sqlite:/var/www/google/log.db');
     	$domains 	= $input->getArgument('domains');
 
-    	//$event_dispatcher 	= new \DomainFinder\Event\EventDispatcher();
         $event_dispatcher   = \Symfony\Component\EventDispatcher\EventDispatcher();
-		//$event_dispatcher->addSubscriber( new \DomainFinder\Event\OutputListener( $output ) );
+		$event_dispatcher->addSubscriber( new \DomainFinder\Event\OutputListener( $output ) );
 		if ( $input->getOption('log') ){
 			$event_dispatcher->addSubscriber( new \DomainFinder\Event\DatabaseListener() );
 		}
@@ -76,8 +75,7 @@ QUERY;
 
         $event_dispatcher   = new \Symfony\Component\EventDispatcher\EventDispatcher();
         $event_dispatcher->addSubscriber( new \DomainFinder\Event\DatabaseListener( $pdo ) );
-        //$event_dispatcher->addSubscriber( new \DomainFinder\Event\OutputListener( $output ) );
-        //$event_dispatcher->addSubscriber( new \DomainFinder\Event\LoggerListener( $pdo ) );
+        $event_dispatcher->addSubscriber( new \DomainFinder\Event\OutputListener( $output ) );
 
         foreach ( $queries as $query ){
             $domains = explode( ' ', $query['domain'] );
