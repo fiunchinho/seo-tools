@@ -5,10 +5,9 @@ $app['debug'] = true;
 
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 $app->register(new Silex\Provider\SessionServiceProvider());
-
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
     'twig.path' => __DIR__ . '/../../web/templates',
-    'debug' 	=> true,
+    'debug' 	=> $app['debug'],
 ));
 
 $app->register(new \Silex\Provider\DoctrineServiceProvider, array(
