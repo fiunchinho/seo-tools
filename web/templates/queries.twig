@@ -10,19 +10,19 @@
           </tr>
         </thead>
         <tbody>
-        {% for keywords, query in queries %}
+        {% for query in queries %}
           <tr>
             <td>{{ loop.index }}</td>
-            <td>{{ keywords }}</td>
+            <td>{{ query.query }}</td>
             <td>
-            	{% for domain in query %}
+            	{% for domain in query.domains %}
 					<p class="list-group-item-text"><a href="http://{{ domain }}" target="_blank">{{ domain }}</a></p>
 				{% endfor %}
             </td>
             <td>
-            	<a class="btn btn-primary" href="{{ path('chart') ~ '?q=' ~ keywords }}">Chart</a>
-				<a class="btn btn-warning" href="{{ path('edit_query', {query: keywords}) }}">Edit</a>
-				<a class="btn btn-danger" href="{{ path('delete_query', {query: keywords}) }}">Delete</a>
+            	<a class="btn btn-primary" href="{{ path('chart') ~ '?q=' ~ query.query }}">Chart</a>
+				<a class="btn btn-warning" href="{{ path('edit_query', {query: query.query}) }}">Edit</a>
+				<a class="btn btn-danger" href="{{ path('delete_query', {query: query.query}) }}">Delete</a>
 			</td>
           </tr>
         {% endfor %}

@@ -2,7 +2,7 @@
 	<div class="form-group">
 		<select class="form-control" id="q" name="q">
 		{% for query in saved_queries %}
-		  <option value="{{ query }}">{{ query }}</option>
+		  <option value="{{ query.query }}">{{ query.query }}</option>
 		{% endfor %}
 		</select>
 	</div>

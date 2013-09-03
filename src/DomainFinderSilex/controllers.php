@@ -1,4 +1,8 @@
 <?php
+$app['saved_queries'] = function() use ($app) {
+	return $app['twig']->render('select_query.twig', array( 'saved_queries' => $app['orm.em']->getRepository( 'DomainFinder\Entity\Query' )->findAll() ) );
+};
+
 $app->get('/new', function() use ($app) {
 	$params = array();
 	$errors = $app['request']->getSession()->getFlashBag()->get('errors');
@@ -11,139 +15,73 @@ $app->get('/new', function() use ($app) {
 })->bind( 'new_query' );
 
 $app->post('/new', function() use ($app) {
-	$query 		= $app['request']->request->get( 'query' );
-
-	$sql 		= <<<QUERY
-INSERT INTO	`queries`
-	( `domain`, `query` )
-VALUES
-	( :domain, :query )
-QUERY;
-	$statement 	= $app['pdo']->prepare( $sql );
-	$insert 	= $statement->execute(
-		array(
-			':domain' 	=> $app['request']->request->get( 'domains' ),
-			':query' 	=> $query
-		)
+	$request  = array(
+		'query' 	=> $app['request']->request->get( 'query' ),
+		'domains' 	=> $app['request']->request->get( 'domains' )
 	);
-	if ( $insert )
+
+	try
 	{
+		$use_case = new DomainFinder\UseCase\SaveQuery( $app['orm.em']->getRepository( 'DomainFinder\Entity\Query' ) );
+		$response = $use_case->run( $request );
 		return $app->redirect( $app['url_generator']->generate('queries') );
 	}
-
-	$app['request']->getSession()->getFlashBag()->set( 'errors', array( 'The query \'' . $query . '\' already exists.' ) );
-
-	return $app->redirect( $app['url_generator']->generate('new_query') );
-	
-	
+	catch ( \Exception $e)
+	{
+		$app['request']->getSession()->getFlashBag()->set( 'errors', array( 'The query \'' . $app['request']->request->get( 'query' ) . '\' already exists.' ) );
+		return $app->redirect( $app['url_generator']->generate('new_query') );
+	}
 });
 
 $app->get('/edit/{query}', function($query) use ($app) {
-	$errors = $app['request']->getSession()->getFlashBag()->get('errors');
+	$errors 	= $app['request']->getSession()->getFlashBag()->get('errors');
+	$use_case 	= new DomainFinder\UseCase\ShowQuery( $app['orm.em']->getRepository( 'DomainFinder\Entity\Query' ) );
+	$response 	= $use_case->run( array( 'query' => $query ) );
+	
+	$params 	= array_merge( $response, array( 'errors' => $errors ) );
 
-	$sql 		= <<<QUERY
-SELECT
-	*
-FROM
-	`queries`
-WHERE
-	query = :query
-QUERY;
-	$statement 	= $app['pdo']->prepare( $sql );
-	$statement->execute( array( ':query' => $query ) );
-
-	$saved_queries 	= $statement->fetchAll( \PDO::FETCH_ASSOC );
-	$query = $saved_queries[0]['query'];
-	foreach ( $saved_queries as $saved_query ) {
-		$domains[] = $saved_query['domain'];
-	}
-
-	return $app['twig']->render('edit.twig', array( 'query' => array( 'query' => $query, 'domains' => $domains ), 'errors' => $errors ) );
+	return $app['twig']->render('edit.twig', $params );
 })->bind('edit_query');
 
 $app->post('/edit', function() use ($app) {
-	$sql 		= <<<QUERY
-UPDATE 	`queries` SET
-	domain = :domain,
-	query = :query
-WHERE
-	query = :original_query
-QUERY;
-	$statement 	= $app['pdo']->prepare( $sql );
-	$insert 	= $statement->execute(
-		array(
-			':domain' 			=> $app['request']->request->get( 'domains' ),
-			':query' 			=> $app['request']->request->get( 'query' ),
-			':original_query' 	=> $app['request']->request->get( 'original_query' )
-		)
+	$request = array(
+		'domains' 			=> $app['request']->request->get( 'domains' ),
+		'query' 			=> $app['request']->request->get( 'query' ),
+		'original_query' 	=> $app['request']->request->get( 'original_query' )
 	);
 
-	if ( $insert )
+	try
 	{
+		$use_case 	= new DomainFinder\UseCase\UpdateQuery( $app['orm.em']->getRepository( 'DomainFinder\Entity\Query' ) );
+		$response = $use_case->run( $request );
 		return $app->redirect( $app['url_generator']->generate('queries') );
 	}
-
-	$app['request']->getSession()->getFlashBag()->set( 'errors', array( 'The query \'' . $query . '\' already exists.' ) );
-	
-	return $app->redirect( $app['url_generator']->generate( 'edit_query', array( 'query' => $app['request']->request->get( 'original_query' ) ) ) );
+	catch ( \Exception $e)
+	{
+		$app['request']->getSession()->getFlashBag()->set( 'errors', array( 'The query \'' . $app['request']->request->get( 'query' ) . '\' already exists.' ) );
+		return $app->redirect( $app['url_generator']->generate( 'edit_query', array( 'query' => $app['request']->request->get( 'original_query' ) ) ) );
+	}
 })->bind('edit_query_post');
 
 $app->get('/delete/{query}', function($query) use ($app) {
-	$sql 		= <<<QUERY
-SELECT
-	*
-FROM
-	`queries`
-WHERE
-	query = :query
-QUERY;
-	$statement 	= $app['pdo']->prepare( $sql );
-	$statement->execute( array( ':query' => $query ) );
+	$use_case 	= new DomainFinder\UseCase\ShowQuery( $app['orm.em']->getRepository( 'DomainFinder\Entity\Query' ) );
+	$response 	= $use_case->run( array( 'query' => $query ) );
 
-	$saved_queries 	= $statement->fetchAll( \PDO::FETCH_ASSOC );
-	$query = $saved_queries[0]['query'];
-	foreach ( $saved_queries as $saved_query ) {
-		$domains[] = $saved_query['domain'];
-	}
-
-	return $app['twig']->render('delete.twig', array( 'query' => array( 'query' => $query, 'domains' => $domains ) ) );
+	return $app['twig']->render('delete.twig', $response );
 })->bind('delete_query');
 
 $app->post('/delete', function() use ($app) {
-	$query 		= $app['request']->request->get( 'query' );
-
-	$sql 		= <<<QUERY
-DELETE FROM
-	`queries`
-WHERE
-	query = :query
-QUERY;
-	$statement 	= $app['pdo']->prepare( $sql );
-	$statement->execute( array( ':query' => $query ) );
+	$use_case 	= new DomainFinder\UseCase\DeleteQuery( $app['orm.em']->getRepository( 'DomainFinder\Entity\Query' ) );
+	$response 	= $use_case->run( array( 'query' => $app['request']->request->get( 'query' ) ) );
 	
 	return $app->redirect( $app['url_generator']->generate('queries') );
 })->bind('delete_query_post');
 
 $app->get('/', function() use ($app) {
-	$sql 		= <<<QUERY
-SELECT
-	*
-FROM
-	`queries`
-ORDER BY
-	id
-QUERY;
-	$statement 	= $app['pdo']->prepare( $sql );
-	$statement->execute();
-	$saved_queries 	= $statement->fetchAll( \PDO::FETCH_ASSOC );
-	foreach ( $saved_queries as $query ) {
-		$queries[$query['query']] 	= explode( ' ', $query['domain'] );
-		//$queries[$query['query']][] = $query['domain'];
-	}
+	$use_case = new DomainFinder\UseCase\QueryList( $app['orm.em']->getRepository( 'DomainFinder\Entity\Query' ) );
+	$response = $use_case->run();
 
-	return $app['twig']->render('queries.twig', array(
-        'queries' => $queries
-    ));
+	return $app['twig']->render( 'queries.twig', $response );
 })->bind( 'queries' );
 
 $app->get('/chart', function() use ($app) {
@@ -201,17 +139,3 @@ $app->get('/chart', function() use ($app) {
         'chart' => json_encode( $rows )
     ));
 })->bind('chart');
-
-$app['saved_queries'] = function() use ($app) {
-	$sql 		= <<<QUERY
-SELECT
-	DISTINCT(query)
-FROM
-	`queries`
-QUERY;
-	$statement 	= $app['pdo']->prepare( $sql );
-	$statement->execute();
-	$saved_queries = $statement->fetchAll( \PDO::FETCH_COLUMN );
-
-	return $app['twig']->render('select_query.twig', array( 'saved_queries' => $saved_queries ) );
-};
