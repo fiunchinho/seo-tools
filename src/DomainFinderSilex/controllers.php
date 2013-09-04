@@ -88,12 +88,12 @@ $app->get('/chart', function() use ($app) {
 	$path 		= $app['request']->getBasepath();
 	$query 		= $app['request']->query->get( 'q' );
     $domains 	= array();
-	$statement 	= $app['pdo']->query( "SELECT * FROM logs WHERE query = '". $query ."' ORDER BY date, domain" );
-	foreach ( $statement->fetchAll( \PDO::FETCH_ASSOC ) as $log ) {
-	  $domains[] = $log['domain'];
-	  $points[$log['date']][] = array(
-	    'domain'    => $log['domain'],
-	    'position'  => $log['position']
+	$logs 		= $app['orm.em']->getRepository( 'DomainFinder\Entity\Rank' )->findBy( array( 'query' => $query ), array( 'date' => 'asc', 'domain' => 'asc' ) );
+	foreach ( $logs as $log ) {
+	  $domains[] = $log->getDomain();
+	  $points[$log->getDate()][] = array(
+	    'domain'    => $log->getDomain(),
+	    'position'  => $log->getPosition()
 	  );
 	}
 	if ( empty( $points ) )
@@ -120,13 +120,11 @@ $app->get('/chart', function() use ($app) {
 	      }
 	  }
 
-
 	  $keys = array_keys($row);
 	  natsort($keys);
 
 	  foreach ($keys as $k)
 	    $row2[$k] = $row[$k];
-
 
 	  if ( ( count( $row2 ) - 1 ) < count( $domains ) ){
 	    $row2 = array_merge( $row2, array( null ) );

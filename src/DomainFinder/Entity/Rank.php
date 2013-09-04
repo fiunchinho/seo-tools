@@ -2,7 +2,7 @@
 namespace DomainFinder\Entity;
 
 /**
- * @Entity @Table(name="logs")
+ * @Entity(repositoryClass="DomainFinder\Entity\RankRepository") @Table(name="logs")
  **/
 class Rank
 {
@@ -16,6 +16,14 @@ class Rank
     protected $date;
     /** @Column(type="integer")**/
     protected $position;
+
+    public function __construct( $query, $domain, $date, $position )
+    {
+        $this->query    = $query;
+        $this->domain   = $domain;
+        $this->date     = $date;
+        $this->position = $position;
+    }
 
     public function getId()
     {

@@ -6,9 +6,9 @@ use Symfony\Component\EventDispatcher\Event;
 
 class DatabaseListener implements EventSubscriberInterface
 {
-	public function __construct( $pdo )
+	public function __construct( \Doctrine\ORM\EntityRepository $repository )
 	{
-		$this->pdo = $pdo;
+		$this->repository = $repository;
 	}
 
 	public static function getSubscribedEvents()
@@ -22,6 +22,10 @@ class DatabaseListener implements EventSubscriberInterface
     {
     	extract( $event->getArguments() );
 		$date 	= date( 'Ymd' );
+		$rank 	= new \DomainFinder\Entity\Rank( $query, $domain, $date, $number_of_results );
+		$this->repository->add( $rank );
+
+		/*
 		$sql 	= <<<QUERY
 INSERT INTO	`logs`
 	( `domain`, `query`, `date`, `position` )
@@ -34,5 +38,6 @@ QUERY;
 		$statement->bindParam( ':date', $date, \PDO::PARAM_STR );
 		$statement->bindParam( ':position', $number_of_results, \PDO::PARAM_INT );
 		$statement->execute();
+		*/
     }
 }
