@@ -30,8 +30,4 @@ $app->register(new \Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvide
     )
 ));
 
-$app['pdo'] = $app->share( function() use ($app){
-	return new \PDO('sqlite:/var/www/google/log.db');
-});
-
 return $app;

@@ -7,16 +7,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use DomainFinder\DomainFinder;
 
-//$console = new Application('My Silex Application', 'n/a');
-
-
-//$dm             = new DocumentManagerHelper( $app['doctrine.odm.mongodb.dm'] );
-//$softonic       = new SoftonicApiHelper( $app['softonic'] );
-//$console->getHelperSet()->set( $dm, 'dm' );
-//$console->getHelperSet()->set( $softonic, 'softonic' );
-
-//$app->register(new Silex\Provider\SwiftmailerServiceProvider());
-
 // Add Doctrine ODM commands
 /*
 $console->addCommands(array(
