@@ -33,11 +33,11 @@ Usage
 
 After installing, execute:
 
-    ./seo find:interactive "Your keyword" your-domain.com other-domain.com
+    ./bin/seo-tools find:interactive "Your keyword" your-domain.com other-domain.com
 
 You will see the results after a while.
 
-    $ ./seo find:interactive "SEO" google.com
+    $ ./bin/seo-tools find:interactive "SEO" google.com
     Domain found in the position 13, in the page number 2.
     +----+--------------------------------+-----------+
     | #  | Url                            | Is Yours? |
