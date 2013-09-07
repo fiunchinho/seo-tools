@@ -37,7 +37,7 @@ $console
         $time       = microtime(true);
         $domains    = $input->getArgument('domains');
 
-        $event_dispatcher   = \Symfony\Component\EventDispatcher\EventDispatcher();
+        $event_dispatcher   = new \Symfony\Component\EventDispatcher\EventDispatcher();
         $event_dispatcher->addSubscriber( new \DomainFinder\Event\OutputListener( $output ) );
         if ( $input->getOption('log') ){
             $rank_repository = $container['orm.em']->getRepository( 'DomainFinder\Entity\Rank' );
