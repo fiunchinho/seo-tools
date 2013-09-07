@@ -35,7 +35,6 @@ $console
     ->setDescription('Find the position of your domain in google search results')
     ->setCode(function (InputInterface $input, OutputInterface $output) use ($console,$container){
         $time       = microtime(true);
-        $pdo        = $container['pdo'];
         $domains    = $input->getArgument('domains');
 
         $event_dispatcher   = \Symfony\Component\EventDispatcher\EventDispatcher();
