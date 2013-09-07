@@ -6,7 +6,7 @@ Group of basic tools for SEO purposes
 Requirements
 ------------
 
-- You need PHP 5.4 or greater
+- You need PHP 5.3.3 or greater
 - Sqlite PDO driver (In ubuntu: sudo apt-get install php5-sqlite)
 - Composer (http://getcomposer.org/download/)
 
