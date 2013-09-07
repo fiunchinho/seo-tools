@@ -11,8 +11,8 @@ Requirements
 - Composer (http://getcomposer.org/download/)
 
 
-Instructions
-------------
+Install
+-------
 
 Fork and install (you need composer for that!):
 
@@ -26,8 +26,12 @@ Then, if you have composer installed do:
 Otherwise, download the phar and do:
 
     php /path/to/composer.phar install
+    
+    
+Usage
+-----
 
-Then, go to folder and execute:
+After installing, execute:
 
     ./seo find:interactive "Your keyword" your-domain.com other-domain.com
 
@@ -61,6 +65,8 @@ You will see the results after a while.
     +----+--------------------------------+-----------+
     Elapsed time: 2.48
 
+More
+----
 
 For further instructions type:
 
