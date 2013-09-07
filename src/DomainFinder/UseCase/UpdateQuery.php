@@ -15,6 +15,6 @@ class UpdateQuery
 		$query->setDomain( $request['domains'] );
 		$this->repo->add( $query );
 
-		return array( 'query' => 2 );
+		return array( 'query' => $query );
 	}
 }
