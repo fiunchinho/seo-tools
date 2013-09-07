@@ -24,20 +24,5 @@ class DatabaseListener implements EventSubscriberInterface
 		$date 	= date( 'Ymd' );
 		$rank 	= new \DomainFinder\Entity\Rank( $query, $domain, $date, $number_of_results );
 		$this->repository->add( $rank );
-
-		/*
-		$sql 	= <<<QUERY
-INSERT INTO	`logs`
-	( `domain`, `query`, `date`, `position` )
-VALUES
-	( :domain, :query, :date, :position )
-QUERY;
-		$statement = $this->pdo->prepare( $sql );
-		$statement->bindParam( ':domain', $domain, \PDO::PARAM_STR );
-		$statement->bindParam( ':query', $query, \PDO::PARAM_STR );
-		$statement->bindParam( ':date', $date, \PDO::PARAM_STR );
-		$statement->bindParam( ':position', $number_of_results, \PDO::PARAM_INT );
-		$statement->execute();
-		*/
     }
 }
