@@ -33,11 +33,36 @@ Then, go to folder and execute:
 
 You will see the results after a while.
 
+    $ ./seo find:interactive "SEO" google.com
+    Domain found in the position 13, in the page number 2.
+    +----+--------------------------------+-----------+
+    | #  | Url                            | Is Yours? |
+    +----+--------------------------------+-----------+
+    | 1  | es.wikipedia.org               | []        |
+    | 2  | es.wikipedia.org               | []        |
+    | 3  | www.seo.org                    | []        |
+    | 4  | www.adrenalina.es              | []        |
+    | 5  | www.danielperis.com            | []        |
+    | 6  | www.seocom.es                  | []        |
+    | 7  | glseobarcelona.com             | []        |
+    | 8  | seoblog.es                     | []        |
+    | 9  | www.oftalmoseo.com             | []        |
+    | 10 | www.clinicseo.es               | []        |
+    | 11 | www.google.es                  | []        |
+    | 12 | es.majesticseo.com             | []        |
+    | 13 | support.google.com             | [X]       |
+    | 14 | www.congresoseoprofesional.com | []        |
+    | 15 | www.senormunoz.es              | []        |
+    | 16 | www.portal-seo.com             | []        |
+    | 17 | www.tallerseo.com              | []        |
+    | 18 | searchengineland.com           | []        |
+    | 19 | www.analistaseo.es             | []        |
+    | 20 | www.seosevilla.org             | []        |
+    +----+--------------------------------+-----------+
+    Elapsed time: 2.48
+
+
 For further instructions type:
 
     ./seo help
     ./seo list
-    
-
-![Find your domain in Google Search Results](http://i.imgur.com/pOV3N4m.png "Google Search Sesults")
-![Find your domain in Google Search Results](http://i.imgur.com/ZoRk8TF.png "Google Search Sesults")
