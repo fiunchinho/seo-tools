@@ -10,7 +10,7 @@ class ShowRank
 
 	public function run( $request = array() )
 	{
-		$ranking = $this->repo->findBy( array( 'query' => $request['query'] ), array( 'domain' => 'asc', 'date' => 'asc' ) );
+		$ranking = $this->repo->findBy( array( 'query' => $request['query'] ), array( 'date' => 'asc', 'domain' => 'asc' ) );
 		return array( 'ranking' => $ranking );
 	}
 }

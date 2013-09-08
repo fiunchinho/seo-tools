@@ -53,5 +53,30 @@ $(function () {
     </script>
 {% endblock %}
 {% block content %}
-    <div id="container" style="margin: auto; width: 650px; height: 450px;"></div>
+    <div id="container" style="margin: auto; width: 700px; height: 450px;"></div>
+    <br />
+    <h2>Rankings for "{{ query }}"</h2>
+    <table class="table table-hover table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Domain</th>
+            <th style="text-align: center">Position</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for date, rankings in dates %}
+            {% for rank_data in rankings %}
+            <tr>
+                {% if ( last_date is not defined ) or ( date != last_date ) %}
+                {% set last_date = date %}
+                <td rowspan="{{ rankings | length }}">{{ rank_data.date | date("Y/m/d") }}</td>
+                {% endif %}
+                <td>{{ rank_data.log.domain }}</td>
+                <td style="text-align: center">{{ rank_data.log.position }}</td>
+            </tr>
+            {% endfor %}
+        {% endfor %}
+        </tbody>
+      </table>
 {% endblock %}

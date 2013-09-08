@@ -90,18 +90,25 @@ $app->get('/chart', function() use ($app) {
 	$response 	= $use_case->run( array( 'query' => $query ) );
 
 	$domains 	= array();
+	$dates 		= array();
 	foreach ( $response['ranking'] as $log ) {
 		$date 	= new DateTime($log->getDate());
 		$domain = $log->getDomain();
 		$domains[$domain][] = array(
-			'date' => $date,
-			'position' => $log->getPosition()
+			'date' 		=> $date,
+			'position' 	=> $log->getPosition()
+		);
+
+		$dates[$log->getDate()][] = array(
+			'date' 		=> new DateTime($log->getDate()),
+			'log' 		=> $log
 		);
 	}
 
     return $app['twig']->render('chart.twig', array(
     	'query' 	=> $query,
-    	'domains' 	=> $domains
+    	'domains' 	=> $domains,
+    	'dates'		=> $dates
     ));
 })->bind('chart');
 
