@@ -1,7 +1,6 @@
 <?php
-
 $app = new Silex\Application();
-$app['debug'] = true;
+$app['debug'] = isset( $config['debug'] )? $config['debug'] : true;
 
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 $app->register(new Silex\Provider\SessionServiceProvider());
@@ -11,14 +10,11 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array(
 ));
 
 $app->register(new \Silex\Provider\DoctrineServiceProvider, array(
-    "db.options" => array(
-        "driver" => "pdo_sqlite",
-        "path" => "/var/www/google/log.db",
-    ),
+    "db.options"    => $config['db']
 ));
 
 $app->register(new \Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider, array(
-    "orm.proxies_dir" => "/var/www/google/src/DomainFinder/Proxy",
+    "orm.proxies_dir" => __DIR__ . "/../DomainFinder/Proxy",
     "orm.em.options" => array(
         "mappings" => array(
             array(
