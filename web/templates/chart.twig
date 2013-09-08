@@ -1,34 +1,57 @@
 {% extends "base.twig" %}
 {% block custom_head %}
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="{{ app.request.basepath }}/js/highcharts.js"></script>
     <script type="text/javascript">
-      google.load("visualization", "1", {packages:["corechart"]});
-      google.setOnLoadCallback(drawChart);
-      function drawChart() {
-        var data = google.visualization.arrayToDataTable(
-          {{ chart | raw }}
-        );
-
-        var options = {
-          title: 'Keyword Analysis: "{{ query }}"',
-          legend: {
-          	position: 'bottom'
-          },
-          chartArea: {
-            'width': 600
-          },
-          pointSize: 5,
-          vAxis: {
-          	direction: -1,
-          	minValue: 1
-          }
-        };
-
-        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
-      }
+$(function () {
+        $('#container').highcharts({
+            title: {
+                text: 'Search Engine Results Position',
+            },
+            subtitle: {
+                text: 'Google.es',
+            },
+            xAxis: {
+                type: 'datetime',
+                dateTimeLabelFormats: {
+                  day: '%Y/%m/%d'
+              }
+            },
+            yAxis: {
+                title: {
+                    text: 'Position'
+                },
+                min: 1,
+                reversed: true
+            },
+            tooltip: {
+                valuePrefix: '#',
+                crosshairs: true
+            },
+            legend: {
+                layout: 'horizontal',
+                align: 'center',
+                verticalAlign: 'bottom',
+                borderWidth: 0
+            },
+            series: [
+                {%- for domain, domain_rankings in domains -%}
+                  {
+                    name: '{{ domain }}',
+                    data : [{%- for ranking_data in domain_rankings -%}
+                    {%- if loop.last -%}
+                    [{{ranking_data.date.timestamp}} * 1000,{{ranking_data.position}}]
+                    {%- else -%}
+                    [{{ranking_data.date.timestamp}} * 1000,{{ranking_data.position}}],
+                    {%- endif -%}
+                    {%- endfor -%}]
+                  },
+                {%- endfor -%}
+            ]
+        });
+    });
     </script>
 {% endblock %}
 {% block content %}
-    <div id="chart_div" style="margin: auto; width: 650px; height: 450px;"></div>
+    <div id="container" style="margin: auto; width: 650px; height: 450px;"></div>
 {% endblock %}

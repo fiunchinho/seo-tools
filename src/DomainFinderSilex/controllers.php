@@ -85,56 +85,23 @@ $app->get('/', function() use ($app) {
 })->bind( 'queries' );
 
 $app->get('/chart', function() use ($app) {
-	$path 		= $app['request']->getBasepath();
 	$query 		= $app['request']->query->get( 'q' );
-    $domains 	= array();
-	$logs 		= $app['orm.em']->getRepository( 'DomainFinder\Entity\Rank' )->findBy( array( 'query' => $query ), array( 'date' => 'asc', 'domain' => 'asc' ) );
-	foreach ( $logs as $log ) {
-	  $domains[] = $log->getDomain();
-	  $points[$log->getDate()][] = array(
-	    'domain'    => $log->getDomain(),
-	    'position'  => $log->getPosition()
-	  );
-	}
-	if ( empty( $points ) )
-	{
-		return $app['twig']->render('no_chart.twig');
-	}
+    $use_case 	= new DomainFinder\UseCase\ShowRank( $app['orm.em']->getRepository( 'DomainFinder\Entity\Rank' ) );
+	$response 	= $use_case->run( array( 'query' => $query ) );
 
-	$domains  = array_unique( $domains );
-	$domains  = array_values ( $domains );
-	$rows     = array();
-	$rows[]   = array_merge( array( 'date' ), $domains );
-	foreach ( $points as $date => $logs ) {
-	  $row = array( date( 'd/m/Y', strtotime( $date ) ) );
-	  foreach ( $logs as $log ) {
-	    $column_for_chart = array_search( $log['domain'], $domains );
-	    $row[$column_for_chart+1] = (int)$log['position'];
-	  }
-
-	  for($i = 0; $i < count($row); $i++)
-	  {
-	      if(!isset($row[$i]))
-	      {
-	          $row[$i] = null;
-	      }
-	  }
-
-	  $keys = array_keys($row);
-	  natsort($keys);
-
-	  foreach ($keys as $k)
-	    $row2[$k] = $row[$k];
-
-	  if ( ( count( $row2 ) - 1 ) < count( $domains ) ){
-	    $row2 = array_merge( $row2, array( null ) );
-	  }
-	  $rows[] = $row2;
+	$domains 	= array();
+	foreach ( $response['ranking'] as $log ) {
+		$date 	= new DateTime($log->getDate());
+		$domain = $log->getDomain();
+		$domains[$domain][] = array(
+			'date' => $date,
+			'position' => $log->getPosition()
+		);
 	}
 
     return $app['twig']->render('chart.twig', array(
-        'query' => $query,
-        'chart' => json_encode( $rows )
+    	'query' 	=> $query,
+    	'domains' 	=> $domains
     ));
 })->bind('chart');
 
