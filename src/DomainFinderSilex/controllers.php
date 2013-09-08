@@ -28,7 +28,7 @@ $app->post('/new', function() use ($app) {
 	}
 	catch ( \Exception $e)
 	{
-		$app['request']->getSession()->getFlashBag()->set( 'errors', array( 'The query \'' . $app['request']->request->get( 'query' ) . '\' already exists.' ) );
+		$app['request']->getSession()->getFlashBag()->set( 'errors', array( 'The query \'' . $app['request']->request->get( 'query' ) . '\' already exists ( ' . $e->getMessage() . ' )' ) );
 		return $app->redirect( $app['url_generator']->generate('new_query') );
 	}
 });
@@ -58,7 +58,7 @@ $app->post('/edit', function() use ($app) {
 	}
 	catch ( \Exception $e)
 	{
-		$app['request']->getSession()->getFlashBag()->set( 'errors', array( 'The query \'' . $app['request']->request->get( 'query' ) . '\' already exists.' ) );
+		$app['request']->getSession()->getFlashBag()->set( 'errors', array( 'The query \'' . $app['request']->request->get( 'query' ) . '\' already exists ( ' . $e->getMessage() . ' )' ) );
 		return $app->redirect( $app['url_generator']->generate( 'edit_query', array( 'query' => $app['request']->request->get( 'original_query' ) ) ) );
 	}
 })->bind('edit_query_post');
