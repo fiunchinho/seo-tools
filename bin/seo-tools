@@ -3,7 +3,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$container = require __DIR__ . '/../src/DomainFinderSilex/app.php';
-//require __DIR__ . '/config/dev.php';
-$console = require __DIR__ . '/../src/DomainFinderConsole/app.php';
+$config 	= require_once __DIR__ . '/../config/config.php';
+$container 	= require_once __DIR__ . '/../src/DomainFinderSilex/app.php';
+$console 	= require_once __DIR__ . '/../src/DomainFinderConsole/app.php';
 $console->run();
