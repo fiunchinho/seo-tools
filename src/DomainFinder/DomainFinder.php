@@ -7,6 +7,12 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class DomainFinder
 {
 	/**
+	 * The domain in which we are going to perform the searcht, f.i. google.fr
+	 * @var string
+	 */
+	public $google_domain = 'google.com';
+
+	/**
 	 * The domain that we are looking for.
 	 * @var string
 	 */
@@ -53,12 +59,14 @@ class DomainFinder
 		return $this->found;
 	}
 
-	public function find( $domain, $query, $max_google_page = 10 )
+	public function find( $domain, $query, $max_google_page = 10, $google_domain = 'google.com', $language = 'en' )
 	{
-		$this->domain 		= $domain;
-		$this->query 		= $query;
-		$this->client		= new ClientCache( new Client(), new ResponseCache( new FileCache() ) );
-		$this->crawler		= $this->client->request( 'GET', 'https://www.google.es/search?q=' . urlencode( $query ) );
+		$this->domain 		 = $domain;
+		$this->google_domain = $google_domain;
+		$this->query 		 = $query;
+		$this->client		 = new ClientCache( new Client(), new ResponseCache( new FileCache() ) );
+		$url = "https://www.$google_domain/search?q=" . urlencode( $query ) . "&hl=$language";
+		$this->crawler		 = $this->client->request( 'GET', $url );
 
 		while( !$this->domainHasBeenFound() && ( $this->current_page < $max_google_page ) )
 		{

@@ -29,6 +29,8 @@ $console
     ->setDefinition(array(
         new InputOption( 'log', null, InputOption::VALUE_NONE, 'Whether or not you want to log the results so you can use them later', null),
         new InputOption( 'max_page_to_look', null, InputOption::VALUE_REQUIRED, 'To avoid being blocked by google, this tool will stop when reaching this page number', 10),
+        new InputOption( 'google_domain', 'g', InputOption::VALUE_REQUIRED, 'The google domain to use (f.i. google.es). Do not include www.', 'google.com'),
+        new InputOption( 'language', null, InputOption::VALUE_REQUIRED, 'The language to use for search engine (f.i. es). Just two chars', 'google.com'),
         new InputArgument( 'query', InputArgument::REQUIRED, 'Keywords to search in Google. If you need more than one keyword, you can use quotes like "buy kindle"'),
         new InputArgument( 'domains', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'Domains, separated by spaces, to find in the search results. Better without the www'),
     ))
@@ -50,8 +52,14 @@ $console
             $table  = new \Symfony\Component\Console\Helper\TableHelper();
             $table->setHeaders( array( '#', 'Url', 'Is Yours?' ) );
 
-            
-            $domain_finder->find( $domain, $input->getArgument('query'), $input->getOption('max_page_to_look') );
+
+            $domain_finder->find(
+                $domain,
+                $input->getArgument('query'),
+                $input->getOption('max_page_to_look'),
+                $input->getOption('google_domain'),
+                $input->getOption('language')
+            );
 
             $counter = 0;
             foreach ( $domain_finder->getGoogleResults() as $result ) {
@@ -60,7 +68,7 @@ $console
 
             $table->render( $output );
         }
-        
+
         $output->writeln( "<info>Elapsed time: " . round( microtime(true) - $time, 3 ) . "</info>");
     })
 ;
@@ -87,7 +95,7 @@ $console
                 $domain_finder->find( $domain, $query->getQuery(), $input->getOption('max_page_to_look') );
             }
         }
-        
+
         $output->writeln( "<info>Elapsed time: " . round( microtime(true) - $time, 3 ) . "</info>");
     })
 ;

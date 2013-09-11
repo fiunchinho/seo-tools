@@ -22,18 +22,18 @@ Fork and install (you need composer for that!):
 Then, if you have composer installed do:
 
     composer install
-    
+
 Otherwise, download the phar and do:
 
     php /path/to/composer.phar install
-    
-    
+
+
 Usage
 -----
 
 After installing, execute:
 
-    ./bin/seo-tools find:interactive "Your keyword" your-domain.com other-domain.com
+    $ ./bin/seo-tools find:interactive "Your keyword" your-domain.com other-domain.com
 
 You will see the results after a while.
 
@@ -64,6 +64,10 @@ You will see the results after a while.
     | 20 | www.seosevilla.org             | []        |
     +----+--------------------------------+-----------+
     Elapsed time: 2.48
+
+If you want to search in a local version of google, try --language and --google_domain, for instance:
+
+    $ ./bin/seo-tools find:interactive "SEO" google.com --language=es --google_domain=google.es
 
 More
 ----
