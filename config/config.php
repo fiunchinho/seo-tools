@@ -3,7 +3,7 @@
 $config = array(
 	'debug' => true,
 	'db' 	=> array(
-		'path' 		=> '/var/www/google/log.db',
+		'path' 		=> __DIR__ . '/../log.db',
 		'driver' 	=> 'pdo_sqlite'
 	)
 );
