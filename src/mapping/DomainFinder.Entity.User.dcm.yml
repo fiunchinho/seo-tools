@@ -1,0 +1,27 @@
+DomainFinder\Entity\User:
+    type: entity
+    repositoryClass: DomainFinder\Entity\UserRepository
+    table: users
+    fields:
+        id:
+            id: true
+            type: integer
+            unsigned: true
+            nullable: false
+            generator:
+                strategy: IDENTITY
+        email:
+            type: string
+            length: 255
+            fixed: false
+            nullable: false
+        password:
+            type: string
+            length: 255
+            fixed: false
+            nullable: false
+    oneToMany:
+        applications:
+            targetEntity: DomainFinder\Entity\Application
+            mappedBy: user
+            fetch: EAGER

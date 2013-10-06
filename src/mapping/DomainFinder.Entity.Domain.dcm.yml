@@ -1,0 +1,31 @@
+DomainFinder\Entity\Domain:
+    type: entity
+    repositoryClass: DomainFinder\Entity\DomainRepository
+    table: domains
+    fields:
+        id:
+            id: true
+            type: integer
+            unsigned: true
+            nullable: false
+            generator:
+                strategy: IDENTITY
+        url:
+            type: string
+            length: 255
+            fixed: false
+            nullable: false
+        competitor:
+            type: boolean
+            nullable: false
+    manyToOne:
+        query:
+            targetEntity: DomainFinder\Entity\Query
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                query_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

@@ -1,0 +1,84 @@
+{% extends "base.twig" %}
+{% block custom_head %}
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="{{ app.request.basepath }}/js/highcharts.js"></script>
+    <script type="text/javascript">
+$(function () {
+        $('#container').highcharts({
+            title: {
+                text: 'Search Engine Results Position for your queries',
+            },
+            subtitle: {
+                text: 'Google.es',
+            },
+            xAxis: {
+                type: 'datetime',
+                dateTimeLabelFormats: {
+                  day: '%Y/%m/%d'
+              }
+            },
+            yAxis: {
+                title: {
+                    text: 'Position'
+                },
+                min: 1,
+                reversed: true
+            },
+            tooltip: {
+                valuePrefix: '#',
+                crosshairs: true
+            },
+            legend: {
+                layout: 'horizontal',
+                align: 'center',
+                verticalAlign: 'bottom',
+                borderWidth: 0
+            },
+            series: [
+                {%- for domain, domain_rankings in domains -%}
+                  {
+                    name: '{{ domain }}',
+                    data : [{%- for ranking_data in domain_rankings -%}
+                    {%- if loop.last -%}
+                    [{{ranking_data.date.timestamp}} * 1000,{{ranking_data.position}}]
+                    {%- else -%}
+                    [{{ranking_data.date.timestamp}} * 1000,{{ranking_data.position}}],
+                    {%- endif -%}
+                    {%- endfor -%}]
+                  },
+                {%- endfor -%}
+            ]
+        });
+    });
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="container" style="margin: auto; width: 700px; height: 450px;"></div>
+    <br />
+    <h2>Rankings for your Application</h2>
+    <table class="table table-hover table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Query</th>
+            <th>Domain</th>
+            <th style="text-align: center">Position</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for date, rankings in dates %}
+            {% for rank_data in rankings %}
+            <tr>
+                {% if ( last_date is not defined ) or ( date != last_date ) %}
+                {% set last_date = date %}
+                <td rowspan="{{ rankings | length }}">{{ rank_data.date | date("Y/m/d") }}</td>
+                {% endif %}
+                <td><a href="{{ path('chart', {application_id: application_id}) ~ '?q=' ~ rank_data.domain.query.query }}">{{ rank_data.domain.query.query }}</a></td>
+                <td>{{ rank_data.domain.url }}</td>
+                <td style="text-align: center">{{ rank_data.position }}</td>
+            </tr>
+            {% endfor %}
+        {% endfor %}
+        </tbody>
+      </table>
+{% endblock %}

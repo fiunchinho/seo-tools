@@ -1,0 +1,27 @@
+DomainFinder\Entity\Application:
+    type: entity
+    table: applications
+    fields:
+        id:
+            id: true
+            type: integer
+            unsigned: true
+            nullable: false
+            generator:
+                strategy: IDENTITY
+        name:
+            type: string
+            length: 255
+            fixed: false
+            nullable: false
+    manyToOne:
+        user:
+            targetEntity: DomainFinder\Entity\User
+            cascade: {  }
+            mappedBy: null
+            inversedBy: applications
+            joinColumns:
+                user_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

@@ -8,7 +8,7 @@ class QueryList
 		$this->repo = $query_repository;
 	}
 
-	public function run( $request = array() )
+	public function run( $request )
 	{
 		return array( 'queries' => $this->repo->findAll() );
 	}

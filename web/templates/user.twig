@@ -1,0 +1,189 @@
+{% extends "base.twig" %}
+{% block custom_head %}
+<style type="text/css">
+
+
+.account-container {
+	width: 390px; 
+	display: block;
+	margin: 60px auto 0 auto;
+	
+	background: #f9f9f9;
+	
+	border: 1px solid #d5d5d5;
+	
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+
+
+}
+
+.login-action {float: right; margin-top: 18px;}
+
+.content {
+	padding: 16px 28px 23px;
+}
+
+.login-fields .field {
+	margin-bottom: 1.25em;
+}
+
+.login-fields label {
+	display: none;
+}
+
+.login-fields input {
+	font-family: 'Open Sans';
+	font-size: 13px;
+	color: #8e8d8d;
+	padding: 11px 15px 10px 50px;
+	background-color: #fdfdfd;
+	width: 100%;
+	display: block;
+	margin: 0;
+	box-shadow: inset 2px 2px 4px #f1f1f1;
+	height: 40px;
+}
+
+.username-field { background: url(../../img/user.png) no-repeat; }
+
+.password-field { background: url(../../img/password.png) no-repeat; }
+
+.login-actions {
+	float: left;
+	width: 100%;
+	margin-top: -1em;
+	margin-bottom: 1.25em;
+}
+
+.login-social {
+	float: left;
+	padding: 10px 0 15px;	
+	border: 1px dotted #CCC;
+	border-right: none;
+	border-left: none;	
+}
+
+span.login-checkbox {
+	float: left;
+	margin-top: 31px;
+}
+
+span.login-checkbox > input[type='checkbox'] {
+    opacity: 0;
+    float: left;
+    width: 15px;
+}
+
+span.login-checkbox > input[type='checkbox'] + label {    
+    clear: none;
+    
+	height: 15px; 
+	display: block;
+    padding: 0 0 0 22px;
+    margin: 0;
+    
+    font-size: 12px;
+    line-height: 1.2em;
+    
+    background: url(../img/check.png) no-repeat 0 0;
+    
+    cursor: pointer;
+}
+
+span.login-checkbox > input[type='checkbox']:checked + label {	
+	background-position: 0 -15px;
+}
+
+.login-extra { width: 300px; margin: 1.5em auto; text-align: center; }
+h1 { margin-bottom: .4em; color: #00ADFF; font-size: 32px; }
+
+/** Buttons **/
+.twitter, .fb {
+	position: relative;
+	
+	height: 32px; 
+	width: 157px; 
+	
+	background: url(../../img/twitter_btn.png) no-repeat;
+	display: inline-block;
+	
+}
+
+.fb { width: 162px; background: url(../../img/fb_btn.png) no-repeat;}
+
+.twitter:hover, .fb:hover {
+	background-position: 0 -32px;
+}
+
+.twitter a, .fb a {
+	padding: 5px 0 0 35px; 
+	text-shadow: -1px -1px 0px rgba(0,0,0,.3); 
+	color:#fff; 
+	font-weight: bold; 
+	font-size: 11px; 
+	height: 32px; 
+	display: block;	
+}
+
+.register .login-social {
+	margin-bottom: 1em;
+}
+
+.register .login-fields input {
+	width: 299px;
+	padding-left: 6px;
+}
+
+
+.register span.login-checkbox {
+	position: relative;
+	top: -6px;
+	
+	width: 200px;
+}
+
+.register span.login-checkbox > input[type="checkbox"] + label {
+	
+	position: relative;
+	
+	line-height: 1.3em;
+}
+</style>
+{% endblock %}
+{% block navigation %}
+	<div class="header" style="min-height: 60px;">
+		<ul class="nav nav-pills pull-right">
+		    <li><a href="/">Index</a></li>
+		    <li class="active"><a href="{{ path('user') }}">Account</a></li>
+		</ul>
+	</div>
+{% endblock navigation %}
+{% block content %}
+	<div class="account-container stacked">
+		<div class="content clearfix">
+			<form action="{{ path('user') }}" method="post">
+				<h1>Update your info</h1>
+				<div class="login-fields">
+					{% if errors is defined %}
+						{% for error in errors %}
+							<div class="alert alert-danger">{{ error }}</div>
+						{% endfor %}
+					{% endif %}					
+					<div class="field">
+						<label for="email">Email:</label>
+						<input type="text" id="email" name="email" value="{{ user.email }}" placeholder="Email" class="form-control input-lg username-field" required />
+					</div> <!-- /field -->
+					<!-- <div class="field">
+						<label for="password">Password:</label>
+						<input type="password" id="password" name="password" value="" placeholder="Password" class="form-control input-lg password-field" required />
+					</div> --> <!-- /password -->
+				</div> <!-- /login-fields -->
+				<div class="login-actions">										
+					<button class="login-action btn btn-primary">Update</button>
+				</div> <!-- .actions -->				
+			</form>
+		</div> <!-- /content -->
+	</div> <!-- /account-container -->
+{% endblock %}

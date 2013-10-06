@@ -1,0 +1,28 @@
+DomainFinder\Entity\Rank:
+    type: entity
+    table: rankings
+    fields:
+        id:
+            id: true
+            type: integer
+            unsigned: true
+            nullable: false
+            generator:
+                strategy: IDENTITY
+        position:
+            type: smallint
+            nullable: false
+        date:
+            type: date
+            nullable: false
+    manyToOne:
+        domain:
+            targetEntity: DomainFinder\Entity\Domain
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                domain_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }
