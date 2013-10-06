@@ -20,6 +20,15 @@
         "silex/silex": "1.1.*@dev",
         "twig/twig": ">=1.8,<2.0-dev",
         "symfony/twig-bridge": "~2.3",
-        "dflydev/doctrine-orm-service-provider": "1.0.*@dev"
-	}
+        "dflydev/doctrine-orm-service-provider": "1.0.*@dev",
+        "doctrine/orm": "2.3.*@dev"
+	},
+    "require-dev":{
+        "behat/behat": "3.0.*@dev",
+        "phpunit/phpunit": "3.7.*",
+        "phpspec/phpspec": "dev-master"
+    },
+    "config": {
+        "bin-dir": "bin/"
+    }
 }

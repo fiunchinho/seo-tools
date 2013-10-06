@@ -72,8 +72,8 @@ $(function () {
                 {% set last_date = date %}
                 <td rowspan="{{ rankings | length }}">{{ rank_data.date | date("Y/m/d") }}</td>
                 {% endif %}
-                <td>{{ rank_data.log.domain }}</td>
-                <td style="text-align: center">{{ rank_data.log.position }}</td>
+                <td>{{ rank_data.domain.url }}</td>
+                <td style="text-align: center">{{ rank_data.position }}</td>
             </tr>
             {% endfor %}
         {% endfor %}

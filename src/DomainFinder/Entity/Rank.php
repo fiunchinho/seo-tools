@@ -1,72 +1,139 @@
 <?php
+
 namespace DomainFinder\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
- * @Entity(repositoryClass="DomainFinder\Entity\RankRepository") @Table(name="logs")
- **/
+ * Rank
+ */
 class Rank
 {
-    /** @Id @Column(type="integer") @GeneratedValue **/
-    protected $id;
-    /** @Column(type="string") **/
-    protected $query;
-    /** @Column(type="string") **/
-    protected $domain;
-    /** @Column(type="string") **/
-    protected $date;
-    /** @Column(type="integer")**/
-    protected $position;
+    /**
+     * @var integer
+     */
+    private $id;
 
-    public function __construct( $query, $domain, $date, $position )
-    {
-        $this->query    = $query;
-        $this->domain   = $domain;
-        $this->date     = $date;
-        $this->position = $position;
-    }
+    /**
+     * @var \DateTime
+     */
+    private $date;
 
+    /**
+     * @var integer
+     */
+    private $position;
+
+    /**
+     * @var \DomainFinder\Entity\Query
+     */
+    private $query;
+
+    /**
+     * @var \DomainFinder\Entity\Domain
+     */
+    private $domain;
+
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
     public function getId()
     {
         return $this->id;
     }
 
-    public function getQuery()
+    /**
+     * Set date
+     *
+     * @param \DateTime $date
+     * @return Rank
+     */
+    public function setDate($date)
     {
-        return $this->query;
+        $this->date = $date;
+    
+        return $this;
     }
 
-    public function setQuery( $query )
-    {
-        $this->query = $query;
-    }
-
-    public function getDomain()
-    {
-        return $this->domain;
-    }
-
-    public function setDomain( $domains )
-    {
-        $this->domain = $domains;
-    }
-
+    /**
+     * Get date
+     *
+     * @return \DateTime 
+     */
     public function getDate()
     {
         return $this->date;
     }
 
-    public function setDate( $date )
+    /**
+     * Set position
+     *
+     * @param integer $position
+     * @return Rank
+     */
+    public function setPosition($position)
     {
-        $this->date = $date;
+        $this->position = $position;
+    
+        return $this;
     }
 
+    /**
+     * Get position
+     *
+     * @return integer 
+     */
     public function getPosition()
     {
         return $this->position;
     }
 
-    public function setPosition( $position )
+    /**
+     * Set query
+     *
+     * @param \DomainFinder\Entity\Query $query
+     * @return Rank
+     */
+    public function setQuery(\DomainFinder\Entity\Query $query = null)
     {
-        $this->position = $position;
+        $this->query = $query;
+    
+        return $this;
+    }
+
+    /**
+     * Get query
+     *
+     * @return \DomainFinder\Entity\Query 
+     */
+    public function getQuery()
+    {
+        return $this->query;
+    }
+
+    /**
+     * Set domain
+     *
+     * @param \DomainFinder\Entity\Domain $domain
+     * @return Rank
+     */
+    public function setDomain(\DomainFinder\Entity\Domain $domain = null)
+    {
+        $this->domain = $domain;
+    
+        return $this;
+    }
+
+    /**
+     * Get domain
+     *
+     * @return \DomainFinder\Entity\Domain 
+     */
+    public function getDomain()
+    {
+        return $this->domain;
     }
 }

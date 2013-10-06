@@ -18,13 +18,20 @@
   </head>
   <body>
 	<div class="container">
+    {% block navigation %}
 		<div class="header" style="min-height: 60px;">
 			<ul class="nav nav-pills pull-right">
-				<li {% if app.request.get('_route') == 'new_query' %}class="active"{% endif %}><a href="{{ path('new_query') }}">Create</a></li>
-				<li {% if app.request.get('_route') == 'queries' %}class="active"{% endif %}><a href="{{ path('queries') }}">List</a></li>
+				<li {% if app.request.get('_route') == 'new_query' %}class="active"{% endif %}><a href="{{ path('new_query', {application_id: application_id}) }}">Create</a></li>
+				<li {% if app.request.get('_route') == 'queries' %}class="active"{% endif %}><a href="{{ path('queries', {application_id: application_id}) }}">List</a></li>
+        {% if app.request.session.get('current_user') is defined %}
+        <li><a href="{{ path('user') }}">Account</a></li>
+        <li><a href="{{ path('logout') }}">Logout</a></li>
+        {% else %}
+        <li {% if app.request.get('_route') == 'login' %}class="active"{% endif %}><a href="{{ path('login') }}">Login</a></li>
+        {% endif %}
 			</ul>
-			{{ app.saved_queries | raw }}
 		</div>
+    {% endblock navigation %}
 		{% block content %}{% endblock %}
 	</div>
   </body>

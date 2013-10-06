@@ -15,17 +15,39 @@
             <td>{{ loop.index }}</td>
             <td>{{ query.query }}</td>
             <td>
-            	{% for domain in query.domains %}
-					<p class="list-group-item-text"><a href="http://{{ domain }}" target="_blank">{{ domain }}</a></p>
-				{% endfor %}
+				<p class="list-group-item-text"><a href="http://{{ query.domain }}" target="_blank">{{ query.domain }}</a></p>
             </td>
             <td>
-            	<a class="btn btn-primary" href="{{ path('chart') ~ '?q=' ~ query.query }}">Chart</a>
-				<a class="btn btn-warning" href="{{ path('edit_query', {query: query.query}) }}">Edit</a>
-				<a class="btn btn-danger" href="{{ path('delete_query', {query: query.query}) }}">Delete</a>
+            	<a class="btn btn-primary" href="{{ path('chart', {application_id: application_id}) ~ '?q=' ~ query.query }}">Chart</a>
+				<a class="btn btn-warning" href="{{ path('edit_query', {query: query.query, application_id: application_id}) }}">Edit</a>
+				<a class="btn btn-danger" href="{{ path('delete_query', {query: query.query, application_id: application_id}) }}">Delete</a>
 			</td>
           </tr>
         {% endfor %}
         </tbody>
       </table>
+      <!--<table class="table table-hover table-bordered table-striped" style="text-align: center">
+        <thead>
+          <tr>
+            <th>Queries</th>
+            <th>Comprarsmartwatch.es</th>
+            <th>smartwatchmania.com</th>
+            <th>comprarsmartwatch.com</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>analisis pebble</td>
+                <td>4</td>
+                <td>7</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>comprar pebble</td>
+                <td>13</td>
+                <td>25</td>
+                <td>23</td>
+            </tr>
+        </tbody>
+      </table>-->
 {% endblock %}

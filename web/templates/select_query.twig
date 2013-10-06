@@ -1,4 +1,4 @@
-<form class="navbar-form navbar-left" action="{{ path('chart') }}" method="GET">
+<form class="navbar-form navbar-left" action="{{ path('chart', {application_id: application_id}) }}" method="GET">
 	<div class="form-group">
 		<select class="form-control" id="q" name="q">
 		{% for query in saved_queries %}

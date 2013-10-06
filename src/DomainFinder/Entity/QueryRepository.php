@@ -7,17 +7,6 @@ class QueryRepository extends EntityRepository
 {
 	protected $already_asked_programs = array();
 
-	public function findAll()
-	{
-		$queries = parent::findAll();
-		foreach ( $queries as $query ) {
-			$domains = explode( ' ', $query->getDomain() );
-			$query->setDomains( $domains );
-		}
-
-		return $queries;
-	}
-
 	public function add( Query $query )
 	{
 		$this->_em->persist( $query );

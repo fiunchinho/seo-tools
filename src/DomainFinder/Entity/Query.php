@@ -1,62 +1,118 @@
 <?php
+
 namespace DomainFinder\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
 /**
- * @Entity(repositoryClass="DomainFinder\Entity\QueryRepository") @Table(name="queries")
- **/
+ * Query
+ */
 class Query
 {
-    /** @Id @Column(type="integer") @GeneratedValue **/
-    protected $id;
-    /** @Column(type="string") **/
-    protected $query;
-    /** @Column(type="string") **/
-    protected $domain;
+    /**
+     * @var integer
+     */
+    private $id;
 
-    protected $domains;
+    /**
+     * @var string
+     */
+    private $query;
 
-    public function __construct( $query, $domain )
+    /**
+     * @var \DomainFinder\Entity\Domain
+     */
+    private $domain;
+
+    /**
+     * @var \DomainFinder\Entity\Application
+     */
+    private $application;
+
+    /**
+     * Constructor
+     */
+    public function __construct( $query )
     {
-        $this->query    = $query;
-        $this->domain   = $domain;
+        $this->query = $query;
     }
 
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
     public function getId()
     {
         return $this->id;
     }
 
+    /**
+     * Set query
+     *
+     * @param string $query
+     * @return Query
+     */
+    public function setQuery($query)
+    {
+        $this->query = $query;
+    
+        return $this;
+    }
+
+    /**
+     * Get query
+     *
+     * @return string 
+     */
     public function getQuery()
     {
         return $this->query;
     }
 
-    public function setQuery( $query )
+    /**
+     * Set domain
+     *
+     * @param \DomainFinder\Entity\Domain $domain
+     * @return Query
+     */
+    public function setDomain(\DomainFinder\Entity\Domain $domain = null)
     {
-        $this->query = $query;
+        $this->domain = $domain;
+    
+        return $this;
     }
 
+    /**
+     * Get domain
+     *
+     * @return \DomainFinder\Entity\Domain 
+     */
     public function getDomain()
     {
         return $this->domain;
     }
 
-    public function setDomain( $domains )
+    /**
+     * Set application
+     *
+     * @param \DomainFinder\Entity\Application $application
+     * @return Query
+     */
+    public function setApplication(\DomainFinder\Entity\Application $application = null)
     {
-        $this->domain = $domains;
+        $this->application = $application;
+    
+        return $this;
     }
 
-    public function setDomains( array $domains )
+    /**
+     * Get application
+     *
+     * @return \DomainFinder\Entity\Application 
+     */
+    public function getApplication()
     {
-        $this->domains = $domains;
-    }
-
-    public function getDomains()
-    {
-        if ( !$this->domains )
-        {
-            $this->domains  = explode( ' ', $this->domain );
-        }
-
-        return $this->domains;
+        return $this->application;
     }
 }

@@ -6,7 +6,7 @@ use Symfony\Component\EventDispatcher\Event;
 
 class DatabaseListener implements EventSubscriberInterface
 {
-	public function __construct( \Doctrine\Common\Persistence\ObjectRepository $repository, $override_existing = true )
+	public function __construct( \Doctrine\Common\Persistence\ObjectRepository $repository, $override_existing = false )
 	{
 		$this->repository     = $repository;
         $this->override       = $override_existing;
