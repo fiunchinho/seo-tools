@@ -10,7 +10,7 @@ class ShowRank
 		$this->domain_repo 	= $domain_repository;
 	}
 
-	public function run( $request = array() )
+	public function execute( $request = array() )
 	{
 		$query = $request['query'];
 		$domains 	= $this->domain_repo->findByQuery( $query );

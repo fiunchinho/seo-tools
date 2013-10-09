@@ -12,7 +12,7 @@ class SaveQuery
 		$this->domain_repo 		= $domain_repository;
 	}
 
-	public function run( $request = array() )
+	public function execute( $request = array() )
 	{
 		$query = new Query( $request['query'] );
 		$query->setApplication( $request['current_user']->getApplication( $request['application'] ) );

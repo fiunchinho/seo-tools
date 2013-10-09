@@ -1,6 +1,6 @@
 {% extends "base.twig" %}
 {% block content %}
-    <form action="{{ path('delete_query_post') }}" method="POST">
+    <form action="{{ path('delete_query_post', {application_id: application_id}) }}" method="POST">
 			<h3>You are about to delete this query. Are you sure?</h3>
 			<div class="list-group">
 			  <span href="#" class="list-group-item">

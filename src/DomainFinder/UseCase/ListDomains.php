@@ -11,7 +11,7 @@ class ListDomains
 		$this->session 		= $session;
 	}
 
-	public function run( $request )
+	public function execute( $request )
 	{
 		$queries = $this->repo->findAll();
 		$domains 	= array();
@@ -30,7 +30,7 @@ class ListDomains
 			}
 		}
 
-	    return array( 'domains' => $domains, 'dates' => $dates, 'query' => $query->getQuery() );
+	    return array( 'queries' => $queries, 'domains' => $domains, 'dates' => $dates, 'query' => $query->getQuery() );
 
 
 		// var_dump( $positions[0]->getQuery() );die;

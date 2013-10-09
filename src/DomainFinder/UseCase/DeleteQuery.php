@@ -8,7 +8,7 @@ class DeleteQuery
 		$this->repo = $query_repository;
 	}
 
-	public function run( $request = array() )
+	public function execute( $request = array() )
 	{
         $this->repo->remove( $this->repo->findOneByQuery( $request['query'] ) );
 		return array();

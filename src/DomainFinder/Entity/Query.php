@@ -25,6 +25,11 @@ class Query
     private $domain;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $domains;
+
+    /**
      * @var \DomainFinder\Entity\Application
      */
     private $application;
@@ -34,7 +39,8 @@ class Query
      */
     public function __construct( $query )
     {
-        $this->query = $query;
+        $this->query    = $query;
+        $this->domains  = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -91,6 +97,39 @@ class Query
     public function getDomain()
     {
         return $this->domain;
+    }
+
+    /**
+     * Add domains
+     *
+     * @param \DomainFinder\Entity\Domain $domains
+     * @return User
+     */
+    public function addDomain(\DomainFinder\Entity\Domain $domain)
+    {
+        $this->domains[] = $domain;
+    
+        return $this;
+    }
+
+    /**
+     * Remove domains
+     *
+     * @param \DomainFinder\Entity\Domain $domain
+     */
+    public function removeDomain(\DomainFinder\Entity\Domain $domain)
+    {
+        $this->domains->removeElement($domain);
+    }
+
+    /**
+     * Get domains
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDomains()
+    {
+        return $this->domains;
     }
 
     /**

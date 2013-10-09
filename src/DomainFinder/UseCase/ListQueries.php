@@ -9,7 +9,7 @@ class ListQueries
 		$this->session 	= $session;
 	}
 
-	public function run( $request )
+	public function execute( $request )
 	{
 		$queries 	= $this->repo->findByDomain( 3 );
 		$domains 	= array();

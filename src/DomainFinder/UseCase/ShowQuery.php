@@ -8,7 +8,7 @@ class ShowQuery
 		$this->repo = $query_repository;
 	}
 
-	public function run( $request = array() )
+	public function execute( $request = array() )
 	{
 		return array( 'query' => $this->repo->findOneByQuery( $request['query'] ) );
 	}

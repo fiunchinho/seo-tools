@@ -9,7 +9,7 @@ class ListApplications
 		$this->session 	= $session;
 	}
 
-	public function run( $request )
+	public function execute( $request )
 	{
 		$current_user = $this->session->get( 'current_user' );
 		$applications = $this->repo->findBy( array( 'user' => $current_user ) );

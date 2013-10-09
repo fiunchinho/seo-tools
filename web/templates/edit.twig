@@ -5,7 +5,7 @@
 			<div class="alert alert-danger">{{ error }}</div>
 		{% endfor %}
 	{% endif %}
-    <form action="{{ path('edit_query_post') }}" method="POST">
+    <form action="{{ path('edit_query_post', {application_id: application_id, query: query.query}) }}" method="POST">
 		<div class="form-group">
 			<label for="query">Query</label>
 			<input class="form-control" type="text" id="query" name="query" required placeholder="Keywords to search" {% if query is defined %}value="{{ query.query }}"{% endif %}/>

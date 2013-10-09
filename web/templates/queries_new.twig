@@ -55,6 +55,33 @@ $(function () {
 {% block content %}
     <div id="container" style="margin: auto; width: 700px; height: 450px;"></div>
     <br />
+    <h2>Current saved queries</h2>
+    <table class="table table-hover">
+        <thead>
+          <tr>
+            <th style="width: 5%">#</th>
+            <th style="width: 25%">Query</th>
+            <th style="width: 30%">Domains</th>
+            <th style="width: 30%">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for query in queries %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ query.query }}</td>
+            <td>
+                <p class="list-group-item-text"><a href="http://{{ query.domain }}" target="_blank">{{ query.domain }}</a></p>
+            </td>
+            <td>
+                <a class="btn btn-primary" href="{{ path('chart', {application_id: application_id}) ~ '?q=' ~ query.query }}">Chart</a>
+                <a class="btn btn-warning" href="{{ path('edit_query', {query: query.query, application_id: application_id}) }}">Edit</a>
+                <a class="btn btn-danger" href="{{ path('delete_query', {query: query.query, application_id: application_id}) }}">Delete</a>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
     <h2>Rankings for "{{ query }}"</h2>
     <table class="table table-hover table-bordered table-striped">
         <thead>

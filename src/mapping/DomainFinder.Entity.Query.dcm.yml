@@ -25,4 +25,9 @@ DomainFinder\Entity\Query:
                 application_id:
                     referencedColumnName: id
             orphanRemoval: false
+    oneToMany:
+        domains:
+            targetEntity: DomainFinder\Entity\Domain
+            mappedBy: query
+
     lifecycleCallbacks: {  }

@@ -30,6 +30,7 @@
         <li {% if app.request.get('_route') == 'login' %}class="active"{% endif %}><a href="{{ path('login') }}">Login</a></li>
         {% endif %}
 			</ul>
+      {{ render(url('saved_queries', {application_id: application_id})) }}
 		</div>
     {% endblock navigation %}
 		{% block content %}{% endblock %}

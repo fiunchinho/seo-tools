@@ -1,5 +1,6 @@
 <?php
 namespace DomainFinder\UseCase;
+use \DomainFinder\Exception\LoginRequiredException;
 
 class LoginRequiredRequest extends BaseRequest
 {
@@ -12,7 +13,7 @@ class LoginRequiredRequest extends BaseRequest
 		$current_user_id 	= $session->get( 'current_user_id' );
 		if ( empty( $current_user_id ) )
 		{
-			throw new \InvalidArgumentException( 'You must be logged in' );
+			throw new LoginRequiredException( 'You must be logged in' );
 		}
 
 		$this->request['current_user'] = $this->repo->find( $current_user_id );

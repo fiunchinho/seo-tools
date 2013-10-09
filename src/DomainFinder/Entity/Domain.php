@@ -48,6 +48,11 @@ class Domain
         $this->competitor   = $competitor;
         $this->positions    = new \Doctrine\Common\Collections\ArrayCollection();
     }
+
+    public function __toString()
+    {
+        return $this->url;
+    }
     
     /**
      * Get id
