@@ -1,5 +1,6 @@
 <?php
-namespace DomainFinder\Entity;
+namespace DomainFinder\Infrastructure;
+use DomainFinder\Entity\User;
 
 class UserArrayRepository implements \Doctrine\Common\Persistence\ObjectRepository
 {
@@ -58,14 +59,6 @@ class UserArrayRepository implements \Doctrine\Common\Persistence\ObjectReposito
 
     public function add( User $user_to_add )
     {
-        foreach ( $this->users as $user )
-        {
-            if ( $user_to_add->getEmail() === $user->getEmail() )
-            {
-                throw new \DomainFinder\Exception\AlreadyRegisteredException( 'User already exists' );
-            }
-        }
-
         $this->users[] = $user_to_add;
     }
 }

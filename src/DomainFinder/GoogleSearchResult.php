@@ -14,7 +14,7 @@ class GoogleSearchResult
 
 	public function is( $domain )
 	{
-		return ( false !== strpos( $this->parsed_url['host'], $domain ) );
+		return ( false !== strpos( $this->parsed_url['host'], $domain->getUrl() ) );
 	}
 
 	public function getHost()

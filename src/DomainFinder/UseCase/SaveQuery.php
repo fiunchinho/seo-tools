@@ -15,10 +15,10 @@ class SaveQuery
 	public function execute( $request = array() )
 	{
 		$query = new Query( $request['query'] );
-		$query->setApplication( $request['current_user']->getApplication( $request['application'] ) );
+		$query->setApplication( $request['current_user']->getApplication( $request['application_id'] ) );
 		$this->query_repo->add( $query );
 
-		foreach( $request['domains'] as $domain ) {
+		foreach( explode( ' ', $request['domains'] ) as $domain ) {
 			$domain_to_save = new Domain( $domain );
 			$domain_to_save->setQuery( $query );
 

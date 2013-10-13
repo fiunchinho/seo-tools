@@ -1,9 +1,12 @@
 <?php
 $app->get('/application/{application_id}/saved_queries', function($application_id) use ($app) {
-	$queries 	= $app['orm.em']->getRepository( 'DomainFinder\Entity\Query' )->findAll();
-	$params 	= array( 'saved_queries' => $queries, 'application_id' => $application_id );
+	$application 	= $app['orm.em']->getRepository( 'DomainFinder\Entity\Application' )->find( $application_id );
+	$queries 		= $app['orm.em']->getRepository( 'DomainFinder\Entity\Query' )->findByApplication( $application );
+	$params 		= array( 'saved_queries' => $queries, 'application_id' => $application_id );
+
 	return $app['twig']->render('select_query.twig', $params );
-})->bind( 'saved_queries' );
+})
+->bind( 'saved_queries' );
 
 $app->get('/application/{application_id}/new', function($application_id) use ($app) {
 	$params = array( 'application_id' => $application_id );
@@ -20,6 +23,7 @@ $app->get('/application/{application_id}/new', function($application_id) use ($a
 		//$domains = $app['orm.em']->getRepository( 'DomainFinder\Entity\Domain' )->findByQuery( 1 );
 		$query 		= $app['orm.em']->createQuery('SELECT u FROM DomainFinder\Entity\Domain u JOIN u.query a WHERE a.application = ' . $application_id);
 		$domains 	= $query->getResult();
+		$urls 		= array();
 		foreach ( $domains as $domain ) {
 			$urls[] = $domain->getUrl();
 		}
@@ -40,11 +44,11 @@ $app->post('/application/{application_id}/new', function($application_id) use ($
 		$params = array(
 			'query' 		=> $app['request']->request->get( 'query' ),
 			'domains' 		=> $app['request']->request->get( 'domains' ),
-			'application'	=> $application_id
+			'application_id'=> $application_id
 		);
 
 		$request_factory 	= $app['requests.factory'];
-		$request 			= $request_factory->get( 'save_query', $params );
+		$request 			= $request_factory->get( 'query.save', $params );
 		$use_case 			= $app['use_cases.query.create'];
 
 		$response 			= $use_case->execute( $request );
@@ -64,7 +68,7 @@ $app->post('/application/{application_id}/new', function($application_id) use ($
 
 $app->get('/application/{application_id}/edit/{query}', function($application_id, $query) use ($app) {
 	$request_factory 	= $app['requests.factory'];
-	$request 			= $request_factory->get( 'show_query', array( 'query' => $query ) );
+	$request 			= $request_factory->get( 'query.show', array( 'application_id' => $application_id, 'query' => $query ) );
 	$use_case 			= $app['use_cases.query.show'];
 
 	$response 			= $use_case->execute( $request );
@@ -75,7 +79,8 @@ $app->get('/application/{application_id}/edit/{query}', function($application_id
 	);
 
 	return $app['twig']->render('edit.twig', array_merge( $params, $response ) );
-})->bind('edit_query');
+})
+->bind('edit_query');
 
 $app->post('/application/{application_id}/edit/{query}', function( $application_id, $query ) use ($app) {
 	try
@@ -111,7 +116,7 @@ $app->get('/application/{application_id}/delete/{query}', function($application_
 	return $app['twig']->render('delete.twig', $response );
 })->bind('delete_query');
 
-$app->post('/application/{application_id}/delete', function() use ($app) {
+$app->post('/application/{application_id}/delete', function($application_id) use ($app) {
 	$request_factory 	= $app['requests.factory'];
 	$request 			= $request_factory->get( 'query.delete', array( 'query' => $app['request']->request->get( 'query' ) ) );
 	$use_case 			= $app['use_cases.query.delete'];
@@ -122,26 +127,21 @@ $app->post('/application/{application_id}/delete', function() use ($app) {
 })->bind('delete_query_post');
 
 $app->get('/application/{application_id}', function( $application_id ) use ($app) {
-	try {
-		$request_factory 	= $app['requests.factory'];
-		$request 			= $request_factory->get( 'query.list' );
-		$use_case 			= $app['use_cases.query.list'];
+	$request_factory 	= $app['requests.factory'];
+	$request 			= $request_factory->get( 'query.list', array( 'application_id' => $application_id ) );
+	$use_case 			= $app['use_cases.query.list'];
 
-		$response 			= $use_case->execute( $request );
+	$response 			= $use_case->execute( $request );
 
-		return $app['twig']->render( 'domains.twig', array_merge( array( 'application_id' => $application_id ), $response ) );
-	}
-	catch ( \DomainFinder\Exception\LoginRequiredException $e)
-	{
-		return $app->redirect( $app['url_generator']->generate('login') );
-	}
-})->bind( 'queries' );
+	return $app['twig']->render( 'queries.twig', array_merge( array( 'application_id' => $application_id ), $response ) );
+})
+->bind( 'queries' );
 
 $app->get('/application/{application_id}/chart', function( $application_id ) use ($app) {
 	$query 				= $app['orm.em']->getRepository( 'DomainFinder\Entity\Query' )->findOneByQuery( $app['request']->query->get( 'q' ) );
 	$request_factory 	= $app['requests.factory'];
 	$request 			= $request_factory->get( 'rank.show', array( 'query' => $query ) );
-	$use_case 	= $app['use_cases.rank.show'];
+	$use_case 			= $app['use_cases.rank.show'];
 
 	$response 	= $use_case->execute( $request );
 	
@@ -159,24 +159,42 @@ $app->get('/application/{application_id}/chart', function( $application_id ) use
     	'domains' 			=> $response['ranking'],
     	'dates'				=> $dates
     ));
-})->bind('chart');
+})
+->bind('chart');
 
 $app->get('/register', function() use ($app) {
-	return $app['twig']->render('register.twig');
-})->bind('register');
+	$params = array();
+	$errors = $app['request']->getSession()->getFlashBag()->get('errors');
+	if ( !empty( $errors ) )
+	{
+		$params['errors'] = $errors;
+	}
+
+	return $app['twig']->render('register.twig', $params);
+})
+->bind('register');
 
 $app->post('/register', function() use ($app) {
-	$params = array(
-		'email' 	=> $app['request']->request->get( 'email' ),
-		'password' 	=> $app['request']->request->get( 'password' )
-	);
-	$request_factory 	= $app['requests.factory'];
-	$request 			= $request_factory->get( 'user.register', $params );
-	$use_case 			= $app['use_cases.user.register'];
+	try {
+		$params = array(
+			'name' 		=> $app['request']->request->get( 'name' ),
+			'email' 	=> $app['request']->request->get( 'email' ),
+			'password' 	=> $app['request']->request->get( 'password' ),
+			'terms' 	=> $app['request']->request->get( 'terms' )
+		);
+		$request_factory 	= $app['requests.factory'];
+		$request 			= $request_factory->get( 'user.register', $params );
+		$use_case 			= $app['use_cases.user.register'];
 
-	$response 			= $use_case->execute( $request );
+		$response 			= $use_case->execute( $request );
 
-	return $app->redirect( $app['url_generator']->generate('index') );
+		return $app->redirect( $app['url_generator']->generate('index') );
+	}
+	catch ( \InvalidArgumentException $e )
+	{
+		$app['request']->getSession()->getFlashBag()->set( 'errors', array( $e->getMessage() ) );
+		return $app->redirect( $app['url_generator']->generate('register') );
+	}
 });
 
 $app->get('/login', function() use ($app) {
@@ -188,7 +206,8 @@ $app->get('/login', function() use ($app) {
 	}
 	
 	return $app['twig']->render('login.twig', $params);
-})->bind('login');
+})
+->bind('login');
 
 $app->post('/login', function() use ($app) {
 	try {
@@ -198,12 +217,11 @@ $app->post('/login', function() use ($app) {
 		);
 		$request_factory 	= $app['requests.factory'];
 		$request 			= $request_factory->get( 'user.login', $params );
+		$use_case 			= $app['use_cases.user.login'];
 
-		$use_case 	= $app['use_cases.user.login'];
-		
-		$response 	= $use_case->execute( $request );
+		$response 			= $use_case->execute( $request );
 	}
-	catch ( \DomainFinder\Exception\LoginRequiredException $e )
+	catch ( \InvalidArgumentException $e )
 	{
 		$app['request']->getSession()->getFlashBag()->set( 'errors', array( $e->getMessage() ) );
 		return $app->redirect( $app['url_generator']->generate('login') );
@@ -217,7 +235,8 @@ $app->get('/logout', function() use ($app) {
 	$use_case->execute();
 	
 	return $app->redirect( $app['url_generator']->generate('login') );
-})->bind('logout');
+})
+->bind('logout');
 
 $app->get('/install', function() use ($app) {
 	$params = array();
@@ -228,7 +247,8 @@ $app->get('/install', function() use ($app) {
 	}
 
 	return $app['twig']->render('install.twig', $params);
-})->bind('install');
+})
+->bind('install');
 
 $app->post('/install', function() use ($app) {
 	try {
@@ -309,14 +329,57 @@ $app->post('/user', function() use ($app) {
 })->bind('user');
 
 $app->get('/', function() use ($app) {
-	$current_user_id = $app['session']->get( 'current_user_id' );
-	$applications = $app['orm.em']->getRepository( 'DomainFinder\Entity\Application' )->findAll();
+	$request_factory 	= $app['requests.factory'];
+	$request 			= $request_factory->get( 'application.list' );
+	$use_case 			= $app['use_cases.application.list'];
 
-    return $app['twig']->render( 'applications.twig', array( 'applications' => $applications ) );
+	$response 			= $use_case->execute( $request );
+
+    return $app['twig']->render( 'applications.twig', $response );
 
 })->bind('index');
 
+$app->get('/new', function() use ($app) {
+	$params 			= array();
+	$errors 			= $app['request']->getSession()->getFlashBag()->get('errors');
+
+	if ( !empty( $errors ) )
+	{
+		$params['errors'] = $errors;
+	}
+
+	return $app['twig']->render('new_application.twig', $params );
+
+})->bind( 'new_application' );
+
+$app->post('/new', function() use ($app) {
+	try
+	{
+		$params = array(
+			'name' => $app['request']->request->get( 'name' )
+		);
+
+		$request_factory 	= $app['requests.factory'];
+		$request 			= $request_factory->get( 'application.save', $params );
+		$use_case 			= $app['use_cases.application.save'];
+
+		$response 			= $use_case->execute( $request );
+
+		return $app->redirect( $app['url_generator']->generate('new_query', array( 'application_id' => $response['application']->getId() ) ) );
+	}
+	catch ( \Exception $e)
+	{
+		$app['request']->getSession()->getFlashBag()->set( 'errors', array( 'The application \'' . $app['request']->request->get( 'query' ) . "' already exists. " . $e->getMessage() ) );
+		return $app->redirect( $app['url_generator']->generate('new_application') );
+	}
+});
+
 $app->error(function (\Exception $e, $code) use ($app) {
+	if ( $e instanceof \DomainFinder\Exception\LoginRequiredException )
+	{
+		return $app->redirect( $app['url_generator']->generate('login') );
+	}
+
     if ( $app['debug'] ) {
         return;
     }

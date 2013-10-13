@@ -2,26 +2,24 @@
 {% block navigation %}
     <div class="header" style="min-height: 60px;">
         <ul class="nav nav-pills pull-right">
-            <li class="active"><a href="/">Index</a></li>
+            <li class="active"><a href="/">Applications</a></li>
             <li><a href="{{ path('user') }}">Account</a></li>
         </ul>
     </div>
 {% endblock navigation %}
 {% block content %}
-    <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for application in applications %}
-          <tr>
-            <td>{{ loop.index }}</td>
-            <td><a href="{{ path('queries', {application_id: application.id}) }}">{{ application.name }}</a></td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
+    <h1>Registered Applications</h1>
+    <ul class="list-group">
+    {% for application in applications %}
+        <li class="list-group-item" style="min-height: 95px">
+          <a href="{{ path('queries', {application_id: application.id}) }}">
+            <span class="badge" style="float: right; font-size: 65px; background-color: #428bca;">{{ application.queries | length }}</span>
+            <img style="float: left; margin-right: 10px;" src="/img/application.png">
+            <h2>{{ application.name }}</h2>
+          </a>
+        </li>
+    {% else %}
+    <h4>You don't have applications yet. <a href="{{ path('new_application') }}">Let's create one!</a></h4>
+    {% endfor %}
+    </ul>
 {% endblock %}

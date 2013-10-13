@@ -1,5 +1,5 @@
 <?php
 namespace DomainFinder\Exception;
 
-class UserNotFoundException extends \Exception
+class UserNotFoundException extends \InvalidArgumentException
 {}

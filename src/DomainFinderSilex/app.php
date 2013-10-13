@@ -19,19 +19,20 @@ $app->register(new \Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvide
     "orm.proxies_dir" => __DIR__ . "/../DomainFinder/Proxy",
     "orm.em.options" => array(
         "mappings" => array(
-            // array(
-            //     "type" 		=> 'annotation',
-            //     "namespace" => 'DomainFinder\Entity',
-            //     "path" 		=> __DIR__ . '/../DomainFinder/Entity',
-            // ),
             array(
                 "type"      => 'yml',
                 "namespace" => 'DomainFinder\Entity',
-                "path"      => __DIR__ . '/../mapping',
+                "path"      => __DIR__ . '/../DomainFinder/Infrastructure/mapping',
             )
         )
     )
 ));
+
+$app['twig']->addExtension(new \Twig_Extensions_Extension_Text); 
+
+$app['password_encoder'] = $app->share(function() use ($app){
+    return new \DomainFinder\PasswordEncoder();
+});
 
 // Repositories
 $app['repositories.user_array'] = $app->share(function() use ($app){
@@ -87,13 +88,13 @@ $app['use_cases.query.create'] = $app->share(function() use ($app) {
     );
 });
 $app['use_cases.user.register'] = $app->share(function() use ($app) {
-    return new DomainFinder\UseCase\RegisterUser( $app['repositories.user'] );
+    return new DomainFinder\UseCase\RegisterUser( $app['repositories.user'], $app['password_encoder'], $app['use_cases.user.login'] );
 });
 $app['use_cases.user.update'] = $app->share(function() use ($app) {
     return new DomainFinder\UseCase\UpdateUser( $app['repositories.user'] );
 });
 $app['use_cases.user.login'] = $app->share(function() use ($app) {
-    return new DomainFinder\UseCase\Login( $app['repositories.user'], $app['session'] );
+    return new DomainFinder\UseCase\Login( $app['repositories.user'], $app['password_encoder'], $app['session'] );
 });
 $app['use_cases.user.logout'] = $app->share(function() use ($app) {
     return new DomainFinder\UseCase\Logout( $app['session'] );
@@ -108,11 +109,10 @@ $app['use_cases.query.delete'] = $app->share(function() use ($app) {
     return new DomainFinder\UseCase\DeleteQuery( $app['repositories.query'] );
 });
 $app['use_cases.query.list'] = $app->share(function() use ($app) {
-    return new DomainFinder\UseCase\ListDomains(
+    return new DomainFinder\UseCase\ListQueries(
         $app['repositories.query'],
         $app['repositories.domain'],
-        $app['repositories.rank'],
-        $app['request']->getSession()
+        $app['repositories.rank']
     );
 });
 $app['use_cases.rank.show'] = $app->share(function() use ($app) {
@@ -125,7 +125,16 @@ $app['use_cases.rank.show'] = $app->share(function() use ($app) {
 $app['use_cases.install'] = $app->share(function() use ($app) {
     return new DomainFinder\UseCase\Install( $app['repositories.user'], $app['session'], $app['orm.em']->getConnection() );
 });
-
+$app['use_cases.application.list'] = $app->share(function() use ($app) {
+    return new DomainFinder\UseCase\ListApplications( $app['repositories.application'] );
+});
+$app['use_cases.application.save'] = $app->share(function() use ($app) {
+    return new DomainFinder\UseCase\SaveApplication(
+        $app['repositories.application'],
+        $app['repositories.user'],
+        $app['session']
+    );
+});
 
 
 

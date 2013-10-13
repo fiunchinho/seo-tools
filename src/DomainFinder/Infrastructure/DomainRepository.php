@@ -1,7 +1,8 @@
 <?php
-namespace DomainFinder\Entity;
+namespace DomainFinder\Infrastructure;
 
 use Doctrine\ORM\EntityRepository;
+use DomainFinder\Entity\Domain;
 
 class DomainRepository extends EntityRepository
 {

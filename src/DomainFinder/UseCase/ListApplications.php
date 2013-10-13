@@ -3,17 +3,15 @@ namespace DomainFinder\UseCase;
 
 class ListApplications
 {
-	public function __construct( $application_repo, $session )
+	public function __construct( $application_repo )
 	{
-		$this->repo 	= $application_repo;
-		$this->session 	= $session;
+		$this->application_repo	= $application_repo;
 	}
 
 	public function execute( $request )
 	{
-		$current_user = $this->session->get( 'current_user' );
-		$applications = $this->repo->findBy( array( 'user' => $current_user ) );
-		var_dump($applications[0]->getDomains()->toArray());die;
+		$applications = $this->application_repo->findBy( array( 'user' => $request['current_user'] ) );
+
 		return array( 'applications' => $applications );
 	}
 }

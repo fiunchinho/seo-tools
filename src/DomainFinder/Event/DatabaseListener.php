@@ -6,10 +6,10 @@ use Symfony\Component\EventDispatcher\Event;
 
 class DatabaseListener implements EventSubscriberInterface
 {
-	public function __construct( \Doctrine\Common\Persistence\ObjectRepository $repository, $override_existing = false )
+	public function __construct( \Doctrine\Common\Persistence\ObjectRepository $rank_repository, $override_existing = false )
 	{
-		$this->repository     = $repository;
-        $this->override       = $override_existing;
+		$this->rank_repository  = $rank_repository;
+        $this->override         = $override_existing;
 	}
 
 	public static function getSubscribedEvents()
@@ -22,9 +22,11 @@ class DatabaseListener implements EventSubscriberInterface
     public function onFound( Event $event )
     {
         extract( $event->getArguments() );
-        $date             = date( 'Ymd' );
-        $rank             = new \DomainFinder\Entity\Rank( $query, $domain, $date, $number_of_results );
-        $existing_rank    = $this->repository->findOneBy( array( 'query' => $query, 'domain' => $domain, 'date' => $date ) );
+        //$date             = date( 'Y-m-d' );
+        $date             = new \DateTime( date( 'Y-m-d' ) );
+        $rank             = new \DomainFinder\Entity\Rank( $domain, $date, $number_of_results );
+        //$existing_rank    = $this->rank_repository->findOneBy( array( 'query' => $query, 'domain' => $domain, 'date' => $date ) );
+        $existing_rank    = $this->rank_repository->findOneBy( array( 'domain' => $domain, 'date' => $date ) );
         if ( !$this->override && $existing_rank )
         {
             return $existing_rank;
@@ -35,7 +37,7 @@ class DatabaseListener implements EventSubscriberInterface
             $rank = $existing_rank;
         }
 
-        $this->repository->add( $rank );
+        $this->rank_repository->add( $rank );
         return $rank;
     }
 }

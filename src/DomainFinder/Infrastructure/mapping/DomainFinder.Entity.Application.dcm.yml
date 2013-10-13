@@ -1,7 +1,7 @@
-DomainFinder\Entity\Query:
+DomainFinder\Entity\Application:
     type: entity
-    repositoryClass: DomainFinder\Entity\QueryRepository
-    table: queries
+    repositoryClass: DomainFinder\Infrastructure\ApplicationRepository
+    table: applications
     fields:
         id:
             id: true
@@ -10,24 +10,24 @@ DomainFinder\Entity\Query:
             nullable: false
             generator:
                 strategy: IDENTITY
-        query:
+        name:
             type: string
             length: 255
             fixed: false
             nullable: false
     manyToOne:
-        application:
-            targetEntity: DomainFinder\Entity\Application
+        user:
+            targetEntity: DomainFinder\Entity\User
             cascade: {  }
             mappedBy: null
-            inversedBy: null
+            inversedBy: applications
             joinColumns:
-                application_id:
+                user_id:
                     referencedColumnName: id
             orphanRemoval: false
     oneToMany:
-        domains:
-            targetEntity: DomainFinder\Entity\Domain
-            mappedBy: query
+        queries:
+            targetEntity: DomainFinder\Entity\Query
+            mappedBy: application
 
     lifecycleCallbacks: {  }

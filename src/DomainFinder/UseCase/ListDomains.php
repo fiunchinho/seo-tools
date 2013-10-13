@@ -3,37 +3,25 @@ namespace DomainFinder\UseCase;
 
 class ListDomains
 {
-	public function __construct( $repo, $domain_repository, $rank_repository, $session )
+	public function __construct( $domain_repository, $session )
 	{
-		$this->repo 		= $repo;
 		$this->domain_repo 	= $domain_repository;
-		$this->rank_repo 	= $rank_repository;
 		$this->session 		= $session;
 	}
 
 	public function execute( $request )
 	{
-		$queries = $this->repo->findAll();
+		$queries 	= $this->domain_repo->findByDomain( 3 );
 		$domains 	= array();
 		$dates 		= array();
-
 		foreach ( $queries as $query ) {
-			$main_domain = $this->domain_repo->findOneBy( array( 'query' => $query, 'competitor' => 0 ) );
-			// var_dump( $main_domain );
-			// var_dump( $main_domain->getPositions() );
-			// die;
-			$positions = $this->rank_repo->findByDomain( $main_domain );
-			foreach ( $positions as $position ) {
-				$id = $query->getQuery() . '(' . $main_domain->getUrl() . ')';
-				$domains[$id][] = $position;
+			foreach ( $query->getPositions() as $position ) {
+				$domain = $query->getDomain()->getUrl();
+				$domains[$query->getQuery()][] = $position;
 				$dates[$position->getDate()->getTimestamp()][] = $position;
 			}
 		}
 
-	    return array( 'queries' => $queries, 'domains' => $domains, 'dates' => $dates, 'query' => $query->getQuery() );
-
-
-		// var_dump( $positions[0]->getQuery() );die;
-		// return array( 'domains' => $this->repo->findAll() );
+	    return array( 'domains' => $domains, 'dates' => $dates, 'query' => 'hola', 'domain' => $domain );
 	}
 }

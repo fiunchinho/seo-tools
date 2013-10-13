@@ -1,6 +1,6 @@
 DomainFinder\Entity\User:
     type: entity
-    repositoryClass: DomainFinder\Entity\UserRepository
+    repositoryClass: DomainFinder\Infrastructure\UserRepository
     table: users
     fields:
         id:

@@ -53,6 +53,7 @@ $(function () {
     </script>
 {% endblock %}
 {% block content %}
+    {% if dates is not empty %}
     <div id="container" style="margin: auto; width: 700px; height: 450px;"></div>
     <br />
     <h2>Rankings for "{{ query }}"</h2>
@@ -79,4 +80,7 @@ $(function () {
         {% endfor %}
         </tbody>
       </table>
+    {% else %}
+        <h4>There are no data collected yet.</h4>
+    {% endif %}
 {% endblock %}

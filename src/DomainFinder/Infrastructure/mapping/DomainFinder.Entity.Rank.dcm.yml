@@ -1,5 +1,6 @@
 DomainFinder\Entity\Rank:
     type: entity
+    repositoryClass: DomainFinder\Infrastructure\RankRepository
     table: rankings
     fields:
         id:

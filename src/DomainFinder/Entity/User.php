@@ -2,8 +2,6 @@
 
 namespace DomainFinder\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
 /**
  * User
  */
@@ -32,8 +30,10 @@ class User
     /**
      * Constructor
      */
-    public function __construct()
+    public function __construct( $email, $password )
     {
+        $this->setEmail( $email );
+        $this->setPassword( $password );
         $this->applications = new \Doctrine\Common\Collections\ArrayCollection();
     }
     

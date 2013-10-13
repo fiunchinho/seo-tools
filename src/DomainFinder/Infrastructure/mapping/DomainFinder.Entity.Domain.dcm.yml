@@ -1,6 +1,6 @@
 DomainFinder\Entity\Domain:
     type: entity
-    repositoryClass: DomainFinder\Entity\DomainRepository
+    repositoryClass: DomainFinder\Infrastructure\DomainRepository
     table: domains
     fields:
         id:

@@ -18,6 +18,8 @@ class ShowRank
 			$ranking[$domain->getUrl()] = $this->rank_repo->findByDomain( $domain );
 		}
 
+		//$graph = new \DomainFinder\RankingGraph( $queries, $this->domain_repo, $this->rank_repo );
+
 		return array( 'ranking' => $ranking );
 	}
 }

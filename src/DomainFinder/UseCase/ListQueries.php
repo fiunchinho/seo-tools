@@ -3,25 +3,18 @@ namespace DomainFinder\UseCase;
 
 class ListQueries
 {
-	public function __construct( $domain_repository, $session )
+	public function __construct( $repo, $domain_repository, $rank_repository )
 	{
-		$this->repo 	= $domain_repository;
-		$this->session 	= $session;
+		$this->query_repo 	= $repo;
+		$this->domain_repo 	= $domain_repository;
+		$this->rank_repo 	= $rank_repository;
 	}
 
-	public function execute( $request )
+	public function execute( ListQueriesRequest $request )
 	{
-		$queries 	= $this->repo->findByDomain( 3 );
-		$domains 	= array();
-		$dates 		= array();
-		foreach ( $queries as $query ) {
-			foreach ( $query->getPositions() as $position ) {
-				$domain = $query->getDomain()->getUrl();
-				$domains[$query->getQuery()][] = $position;
-				$dates[$position->getDate()->getTimestamp()][] = $position;
-			}
-		}
+		$queries 	= $this->query_repo->findByapplication( $request['application'] );
+		$graph 		= new \DomainFinder\RankingGraph( $queries, $this->domain_repo, $this->rank_repo );
 
-	    return array( 'domains' => $domains, 'dates' => $dates, 'query' => 'hola', 'domain' => $domain );
+	    return array( 'queries' => $queries, 'graph' => $graph );
 	}
 }

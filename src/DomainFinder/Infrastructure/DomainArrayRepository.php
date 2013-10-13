@@ -1,5 +1,7 @@
 <?php
-namespace DomainFinder\Entity;
+namespace DomainFinder\Infrastructure;
+
+use DomainFinder\Entity\Domain;
 
 class DomainArrayRepository implements \Doctrine\Common\Persistence\ObjectRepository
 {

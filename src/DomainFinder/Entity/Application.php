@@ -32,8 +32,10 @@ class Application
     /**
      * Constructor
      */
-    public function __construct()
+    public function __construct( $name, User $user )
     {
+        $this->setName( $name );
+        $this->setUser( $user );
         $this->queries = new \Doctrine\Common\Collections\ArrayCollection();
     }
     

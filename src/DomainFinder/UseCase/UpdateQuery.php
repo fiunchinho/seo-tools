@@ -15,23 +15,15 @@ class UpdateQuery
 	public function execute( $request = array() )
 	{
 		$query = $this->query_repo->findOneByQuery( $request['original_query'] );
+		if ( $query->getApplication() !== $request['application'] )
+		{
+			throw new \InvalidArgumentException( 'You don\'t have permissions to do this' );
+		}
 		$request_domains = explode( ' ', $request['domains'] );
-		// $current_domains = $query->getDomains();
-		// var_dump( in_array( 'mydomain.net', $current_domains->toArray(), true ), $request_domains, $current_domains->toArray() );die;
-		
-		//$query->setQuery( $request['query'] );
-		//$current_domains = $this->domain_repo->findByQuery( $query );
-		
+
 		$this->deleteDomainsThatAreDeleted( $query, $request_domains );
 		$this->createDomainsThatAreNew( $query, $request_domains );
 		$this->query_repo->add( $query );
-		// foreach( $request_domains as $domain ) {
-
-		// 	$domain_to_save = new Domain( $domain );
-		// 	$domain_to_save->setQuery( $query );
-
-		// 	$this->domain_repo->add( $domain_to_save );
-		// }
 
 		return array( 'query' => $query );
 	}

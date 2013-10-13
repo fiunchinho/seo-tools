@@ -179,17 +179,17 @@ h1 { margin-bottom: .4em; color: #00ADFF; font-size: 32px; }
 				<div class="login-fields">
 					
 					<p>Create your free account:</p>
+
+					{% if errors is defined %}
+						{% for error in errors %}
+							<div class="alert alert-danger">{{ error }}</div>
+						{% endfor %}
+					{% endif %}
 					
 					<div class="field">
-						<label for="firstname">First Name:</label>
-						<input type="text" id="firstname" name="firstname" value="" placeholder="First Name" class="form-control" />
+						<label for="firstname">Your Name:</label>
+						<input type="text" id="name" name="name" value="" placeholder="Your Name" class="form-control" />
 					</div> <!-- /field -->
-					
-					<div class="field">
-						<label for="lastname">Last Name:</label>	
-						<input type="text" id="lastname" name="lastname" value="" placeholder="Last Name" class="form-control" />
-					</div> <!-- /field -->
-					
 					
 					<div class="field">
 						<label for="email">Email Address:</label>
@@ -200,23 +200,15 @@ h1 { margin-bottom: .4em; color: #00ADFF; font-size: 32px; }
 						<label for="password">Password:</label>
 						<input type="password" id="password" name="password" value="" placeholder="Password" class="form-control"/>
 					</div> <!-- /field -->
-					
-					<div class="field">
-						<label for="confirm_password">Confirm Password:</label>
-						<input type="password" id="confirm_password" name="confirm_password" value="" placeholder="Confirm Password" class="form-control"/>
-					</div> <!-- /field -->
-					
+
 				</div> <!-- /login-fields -->
 				
 				<div class="login-actions">
-					
 					<span class="login-checkbox">
-						<input id="Field" name="Field" type="checkbox" class="field login-checkbox" value="First Choice" tabindex="4" />
-						<label class="choice" for="Field">I have read and agree with the Terms of Use.</label>
+						<input name="terms" id="terms" type="checkbox" class="field login-checkbox" />
+						<label class="choice" for="terms">I have read and agree with the Terms of Use.</label>
 					</span>
-										
 					<button class="login-action btn btn-primary">Register</button>
-					
 				</div> <!-- .actions -->
 				
 			</form>

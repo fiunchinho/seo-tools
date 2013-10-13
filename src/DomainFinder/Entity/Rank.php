@@ -34,6 +34,13 @@ class Rank
      */
     private $domain;
 
+    public function __construct( Domain $domain, $date, $position )
+    {
+        $this->domain   = $domain;
+        $this->date     = $date;
+        $this->position = $position;
+    }
+
 
     /**
      * Get id
