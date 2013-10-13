@@ -1,77 +1,88 @@
 <?php
 namespace DomainFinder;
 
+use DomainFinder\Event\DatabaseListener;
+
 class DatabaseListenerTest extends \PHPUnit_Framework_TestCase
 {
 	public function setUp()
 	{
-		$event_arguments = array( 'domain' => 'google.com' , 'query' => 'seo', 'number_of_results' => '23' );
-		$this->event = new \Symfony\Component\EventDispatcher\GenericEvent();
-		$this->event->setArguments( $event_arguments );
+		$this->rank_repository = $this->getMockBuilder( '\DomainFinder\Entity\RankRepositoryInterface' )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$domain = $this->getMockBuilder( '\DomainFinder\Entity\Domain' )
+			->setConstructorArgs( array( 'google.com' ) )
+			->getMock();
 
 		$this->rank = $this->getMockBuilder( '\DomainFinder\Entity\Rank' )
-			->setConstructorArgs( array( 'seo', 'google.com', '20130808', 23 ) )
+			->setConstructorArgs( array( $domain, new \DateTime( '2013-08-08' ), 23 ) )
 			->getMock();
+
+		$event_arguments 	= array( 'domain' => $domain , 'query' => 'seo', 'number_of_results' => '23' );
+		$this->event 		= new \Symfony\Component\EventDispatcher\GenericEvent();
+		$this->event->setArguments( $event_arguments );
 	}
 
 	public function testInsertingNewRankingWhenThereIsNoRankingsForThatDateAndOverrideIsDisabled()
 	{
-		$repository = $this->getMockBuilder( '\DomainFinder\Entity\RankRepository' )->disableOriginalConstructor()->getMock();
-		$repository->expects( $this->once() )->method( 'add' );
+		$this->itShouldSaveTheRankingInTheRepository( $this->rank_repository );
 
-		$listener 	= new \DomainFinder\Event\DatabaseListener( $repository );
+		$listener = new DatabaseListener( $this->rank_repository );
 		$listener->onFound( $this->event );
 	}
 
 	public function testInsertingNewRankingWhenThereIsNoRankingsForThatDateAndOverrideIsEnabled()
 	{
-		$repository = $this->getMockBuilder( '\DomainFinder\Entity\RankRepository' )->disableOriginalConstructor()->getMock();
-		$repository->expects( $this->once() )->method( 'add' );
+		$this->itShouldSaveTheRankingInTheRepository( $this->rank_repository );
 
-		$listener 	= new \DomainFinder\Event\DatabaseListener( $repository );
+		$listener = new DatabaseListener( $this->rank_repository, DatabaseListener::OVERRIDE_EXISTING_RANKING );
 		$listener->onFound( $this->event );
 	}
 
 	public function testInsertingRankingWhenThereIsAlreadyARankingForThatDateAndOverrideIsDisabled()
 	{
-		$repository = $this->getMockBuilder( '\DomainFinder\Entity\RankRepository' )->disableOriginalConstructor()->getMock();
-		$repository->expects( $this->never() )->method( 'add' );
-		$repository
-			->expects( $this->once() )
-			->method( 'findOneBy' )
-			->will( $this->returnValue( $this->rank ) );
+		$this->givenRankingsForThisDate();
+		$this->itShouldNotSaveTheRankingInTheRepository( $this->rank_repository );
 
-		$listener 	= new \DomainFinder\Event\DatabaseListener( $repository, false );
-		$listener->onFound( $this->event );
-	}
-
-	public function testInsertingRankingWhenThereIsAlreadyARankingForThatDateAndOverrideIsEnabled()
-	{
-		$repository = $this->getMockBuilder( '\DomainFinder\Entity\RankRepository' )->disableOriginalConstructor()->getMock();
-		$repository->expects( $this->once() )->method( 'add' );
-		$repository
-			->expects( $this->once() )
-			->method( 'findOneBy' )
-			->will( $this->returnValue( $this->rank ) );
-
-		$listener 	= new \DomainFinder\Event\DatabaseListener( $repository, true );
+		$listener = new DatabaseListener( $this->rank_repository );
 		$listener->onFound( $this->event );
 	}
 
 	public function testInsertingRankingWhenThereIsAlreadyARankingForThatDateAndOverrideIsEnabledUpdatesOldRanking()
 	{
-		$this->rank
-			->expects( $this->once() )
-			->method( 'setPosition' );
+		$this->givenRankingsForThisDate();
+		$this->itShouldUpdateThePositionInRanking();
+		$this->itShouldSaveTheRankingInTheRepository( $this->rank_repository );
 
-		$repository = $this->getMockBuilder( '\DomainFinder\Entity\RankRepository' )->disableOriginalConstructor()->getMock();
-		$repository->expects( $this->once() )->method( 'add' );
-		$repository
+		$listener = new DatabaseListener( $this->rank_repository, DatabaseListener::OVERRIDE_EXISTING_RANKING );
+		$listener->onFound( $this->event );
+	}
+
+	private function givenRankingsForThisDate()
+	{
+		$this->rank_repository
 			->expects( $this->any() )
 			->method( 'findOneBy' )
 			->will( $this->returnValue( $this->rank ) );
+	}
 
-		$listener 	= new \DomainFinder\Event\DatabaseListener( $repository, true );
-		$listener->onFound( $this->event );
+	private function itShouldUpdateThePositionInRanking()
+	{
+		$this->rank
+			->expects( $this->once() )
+			->method( 'setPosition' );
+	}
+
+	private function itShouldSaveTheRankingInTheRepository( $repository )
+	{
+		$repository->expects( $this->once() )
+			->method( 'add' );
+	}
+
+	private function itShouldNotSaveTheRankingInTheRepository( $repository )
+	{
+		$repository->expects( $this->never() )
+			->method( 'add' );
 	}
 }
