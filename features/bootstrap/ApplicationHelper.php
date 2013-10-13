@@ -13,7 +13,7 @@ class ApplicationHelper
             // new \DomainFinder\Entity\User( 'jack@email.com', 'correct_password' )
         );
 
-        $this->repo       = new \DomainFinder\Entity\ApplicationArrayRepository( array() );
+        $this->repo       = new \DomainFinder\Infrastructure\ApplicationArrayRepository( array() );
     }
 
     public function create( $application )

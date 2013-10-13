@@ -15,7 +15,7 @@ class DomainHelper
             // new \DomainFinder\Entity\User( 'jack@email.com', 'correct_password' )
         );
 
-        $this->repo       = new \DomainFinder\Entity\DomainArrayRepository( array() );
+        $this->repo       = new \DomainFinder\Infrastructure\DomainArrayRepository( array() );
         // $config             = require __DIR__ . '/../../config/config.php';
         // $this->container    = require __DIR__ . '/../../src/DomainFinderSilex/app.php';        
         // $this->session      = $this->container['session'];

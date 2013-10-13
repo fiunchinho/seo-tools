@@ -7,21 +7,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use DomainFinder\DomainFinder;
 
-// Add Doctrine ODM commands
-/*
-$console->addCommands(array(
-    new Doctrine\ODM\MongoDB\Tools\Console\Command\GenerateDocumentsCommand(),
-    new Doctrine\ODM\MongoDB\Tools\Console\Command\GenerateHydratorsCommand(),
-    new Doctrine\ODM\MongoDB\Tools\Console\Command\GenerateProxiesCommand(),
-    new Doctrine\ODM\MongoDB\Tools\Console\Command\GenerateRepositoriesCommand(),
-    new Doctrine\ODM\MongoDB\Tools\Console\Command\QueryCommand(),
-    new Doctrine\ODM\MongoDB\Tools\Console\Command\ClearCache\MetadataCommand(),
-    new DomainFinder\Command\FindDomainOnDemand(),
-    new DomainFinder\Command\FindSavedDomains(),
-));
-*/
-
-
 $console = new Application('SEO Tools', '1.0');
 
 $console

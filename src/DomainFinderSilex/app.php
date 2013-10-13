@@ -35,31 +35,64 @@ $app['password_encoder'] = $app->share(function() use ($app){
 });
 
 // Repositories
-$app['repositories.user_array'] = $app->share(function() use ($app){
-    $users = array(
-        new \DomainFinder\Entity\User( 'existing@email.com', 'correct_password' ),
-        new \DomainFinder\Entity\User( 'jack@email.com', 'correct_password' )
-    );
-    return new \DomainFinder\Entity\UserArrayRepository( $users );
-});
-
 $app['repositories.user'] = $app->share(function() use ($app){
+    if ( $app['acceptance_testing'] )
+    {
+        $encoder    = $app['password_encoder'];
+        $user_repo  = new \DomainFinder\Infrastructure\UserArrayRepository();
+        $user_repo->add( new \DomainFinder\Entity\User( 'existing@email.com', $encoder->hash( 'correct_password' ) ) );
+        $user_repo->add( new \DomainFinder\Entity\User( 'jack@email.com', $encoder->hash( 'correct_password' ) ) );
+
+        return $user_repo;
+    }
     return $app['orm.em']->getRepository( 'DomainFinder\Entity\User' );
 });
 
 $app['repositories.query'] = $app->share(function() use ($app){
+    if ( $app['acceptance_testing'] )
+    {
+        $queries = array(
+            new \DomainFinder\Entity\Query( 'asdasd' ),
+            new \DomainFinder\Entity\Query( 'qweqre' )
+        );
+        return new \DomainFinder\Infrastructure\QueryArrayRepository( $queries );
+    }
     return $app['orm.em']->getRepository( 'DomainFinder\Entity\Query' );
 });
 
 $app['repositories.domain'] = $app->share(function() use ($app){
+    if ( $app['acceptance_testing'] )
+    {
+        $domains = array(
+            new \DomainFinder\Entity\Domain( 'google.es' ),
+            new \DomainFinder\Entity\Domain( 'yahoo.com' )
+        );
+        return new \DomainFinder\Infrastructure\DomainArrayRepository( $domains );
+    }
     return $app['orm.em']->getRepository( 'DomainFinder\Entity\Domain' );
 });
 
 $app['repositories.application'] = $app->share(function() use ($app){
+    if ( $app['acceptance_testing'] )
+    {
+        $applications = array(
+            new \DomainFinder\Entity\Application( 'google.es' ),
+            new \DomainFinder\Entity\Application( 'yahoo.com' )
+        );
+        return new \DomainFinder\Infrastructure\ApplicationArrayRepository( $applications );
+    }
     return $app['orm.em']->getRepository( 'DomainFinder\Entity\Application' );
 });
 
 $app['repositories.rank'] = $app->share(function() use ($app){
+    if ( $app['acceptance_testing'] )
+    {
+        $rankings = array(
+            new \DomainFinder\Entity\Rank( 'google.es' ),
+            new \DomainFinder\Entity\Rank( 'yahoo.com' )
+        );
+        return new \DomainFinder\Infrastructure\RankArrayRepository( $rankings );
+    }
     return $app['orm.em']->getRepository( 'DomainFinder\Entity\Rank' );
 });
 

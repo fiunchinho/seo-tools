@@ -26,12 +26,9 @@ class UserArrayRepository implements \Doctrine\Common\Persistence\ObjectReposito
 
     public function findOneByEmail( $email )
     {
-    	foreach ( $this->users as $user )
-    	{
-            if ( $user->getEmail() === $email )
-            {
-                return $user;
-            }
+        if ( array_key_exists( $email, $this->users ) )
+        {
+            return $this->users[$email];
         }
 
         return null;
@@ -39,7 +36,7 @@ class UserArrayRepository implements \Doctrine\Common\Persistence\ObjectReposito
 
     function findAll()
     {
-
+        return $this->users;
     }
 
     function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
@@ -59,6 +56,6 @@ class UserArrayRepository implements \Doctrine\Common\Persistence\ObjectReposito
 
     public function add( User $user_to_add )
     {
-        $this->users[] = $user_to_add;
+        $this->users[$user_to_add->getEmail()] = $user_to_add;
     }
 }

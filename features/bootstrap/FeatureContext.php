@@ -25,9 +25,9 @@ class FeatureContext extends BehatContext
      */
     public function __construct(array $parameters)
     {
-    	$this->user_helper 		= new UserHelper();
-    	$this->domain_helper 	= new DomainHelper();
-    	$this->application_helper 	= new ApplicationHelper();
+    	$this->user_helper         = new UserHelper();
+    	$this->domain_helper       = new DomainHelper();
+    	$this->application_helper  = new ApplicationHelper();
     	#$this->useContext('user_context', new UserFeatureContext( array() ) );
     	//$this->container 	= require_once __DIR__ . '/../../src/DomainFinderSilex/app.php';
     }
@@ -56,6 +56,30 @@ class FeatureContext extends BehatContext
     }
 
     /**
+     * @Given /^I provide a valid name like "([^"]*)"$/
+     */
+    public function iProvideAValidNameLike($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @Given /^I accept the terms$/
+     */
+    public function iAcceptTheTerms()
+    {
+        $this->terms = 'on';
+    }
+
+    /**
+     * @Given /^I don't accept the terms$/
+     */
+    public function iDontAcceptTheTerms()
+    {
+        $this->terms = null;
+    }
+
+    /**
      * @When /^I try to register$/
      */
     public function iTryToRegister()
@@ -63,17 +87,19 @@ class FeatureContext extends BehatContext
     	$this->response = $this->user_helper->registerUser(
     		array(
     			'email' 	=> $this->email,
-    			'password' 	=> $this->password
+                'password'  => $this->password,
+                'name'      => $this->name,
+    			'terms' 	=> $this->terms
     		)
     	);
     }
 
     /**
-     * @Given /^I don\'t provide a valid email like "([^"]*)"$/
+     * @Given /^I don\'t provide an email$/
      */
-    public function iDonTProvideAValidEmailLike($email)
+    public function iDonTProvideAnEmail()
     {
-        $this->email = $email;
+        $this->email = null;
     }
 
     /**
