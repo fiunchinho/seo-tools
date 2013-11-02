@@ -1,7 +1,8 @@
 SEO Tools
 =========
-
 Group of basic tools for SEO purposes
+
+[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/fiunchinho/seo-tools/badges/quality-score.png?s=942524b3a26a9475fa79ff1636b2f5268b650e84)](https://scrutinizer-ci.com/g/fiunchinho/seo-tools/)
 
 Requirements
 ------------
